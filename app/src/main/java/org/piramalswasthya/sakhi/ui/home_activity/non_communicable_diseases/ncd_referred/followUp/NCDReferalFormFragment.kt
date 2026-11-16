@@ -297,8 +297,9 @@ class NCDReferalFormFragment : Fragment() {
         binding.fabEdit.setOnClickListener {
             binding.fabEdit.isGone = true
             binding.btnSave.isVisible = true
-
-            viewModel.schema.value?.let { formAdapter.updateFields(viewModel.getVisibleFields()) }
+            viewModel.enableFormEditing()
+            formAdapter.setViewMode(false)
+            formAdapter.updateFields(viewModel.getVisibleFields())
         }
     }
 
@@ -317,7 +318,7 @@ class NCDReferalFormFragment : Fragment() {
 
                         formAdapter.updateFields(visibleFields)
                         binding.btnSave.isVisible = !viewModel.isViewMode && !viewModel.isTbFormAlreadyFilled
-                        binding.fabEdit.isVisible = viewModel.isViewMode && !viewModel.isTbFormAlreadyFilled
+                        binding.fabEdit.isVisible = viewModel.isViewMode
                         binding.followupHeading.isGone = true
                         binding.includeBottleTable.root.isGone = true
 

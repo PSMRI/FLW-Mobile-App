@@ -80,7 +80,7 @@ class HwcReferredFragment : Fragment() {
         // referral follow-up form. Other rows stay as before.
         val benAdapter = NcdReferListAdapter(
             viewModel.userName,
-            NcdReferListAdapter.NcdReferallickListener { benId, hhId, referReason, referredDate, referralType ->
+            NcdReferListAdapter.NcdReferallickListener { benId, hhId, referReason, referredDate, referralType, isViewMode ->
                 if (findNavController().currentDestination?.id == R.id.hwcReferredFragment) {
                     findNavController().navigate(
                         HwcReferredFragmentDirections.actionHwcReferredFragmentToNCDReferalFormFragment(
@@ -88,7 +88,8 @@ class HwcReferredFragment : Fragment() {
                             hhId = hhId,
                             referReason = referReason.toString(),
                             referredDate = referredDate,
-                            referralType = referralType
+                            referralType = referralType,
+                            isViewMode = isViewMode
                         )
                     )
                 }

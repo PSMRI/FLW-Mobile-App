@@ -371,12 +371,24 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/margin_normal"
                     android:layout_marginBottom="@dimen/margin_normal"
-                    android:onClick="@{()-> clickListener.onClickForm(benWithTb)}"
                     android:textColor="?attr/colorOnPrimary"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/linear_tb_screening_list_Layout"
                     tools:backgroundTint="@android:color/holo_red_dark" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_add_screening"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_normal"
+                    android:layout_marginBottom="@dimen/margin_normal"
+                    android:text="@string/add_screening"
+                    android:textColor="?attr/colorOnPrimary"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/linear_tb_screening_list_Layout" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

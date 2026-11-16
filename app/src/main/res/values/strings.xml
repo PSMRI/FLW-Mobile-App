@@ -531,6 +531,12 @@
     <string name="eligible_couple_tracking_list">Eligible Couple Tracking List</string>
     <string name="eligible_couple_tracking_form">Eligible Couple Tracking Form</string>
     <string name="tb_screening_list">TB Screening List</string>
+    <string name="tb_screening_presumptive_block">Previously screened beneficiary is already present in presumptive TB cases.</string>
+    <string name="tb_screening_confirm_followup_not_started">Under TB confirm cases, treatment follow-up has not started. Treatment completion date: %1$s.</string>
+    <string name="tb_screening_confirm_treatment_ongoing">Beneficiary is under Ongoing treatment. Treatment completion date: %1$s.</string>
+    <string name="tb_screening_tpt_followup_not_started">Under TPT confirm cases, TPT treatment follow-up has not started. Treatment completion date: %1$s.</string>
+    <string name="tb_screening_tpt_treatment_ongoing">Beneficiary is under Ongoing TPT treatment. Treatment completion date: %1$s.</string>
+    <string name="not_available">Not available</string>
     <string name="tb_suspected_list">Presumptive TB cases</string>
     <string name="tb_screening_form">TB Screening Form</string>
     <string name="tb_suspected_copd_case">Suspected COPD case</string>
@@ -1436,6 +1442,8 @@
 
     <string name="mda_form_campagain_title">Lymphatic Filariasis (LF) Mass Drug Administration (MDA) campaign</string>
     <string name="screening">Screening</string>
+    <string name="add_screening">Add screening</string>
+    <string name="view_screenings">View screenings</string>
     <string name="suspected">Suspected</string>
     <string name="malaria_confirmed">Confirmed</string>
     <string name="malaria_not_confirmed">Not Confirmed</string>

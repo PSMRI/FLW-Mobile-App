@@ -563,7 +563,7 @@ class IconDataset @Inject constructor(
         ),
         Icon(
             R.drawable.ncd_icon,
-            resources.getString(R.string.icon_title_non_communicable),
+            "NCD",
             null,
             DiseaseControlFragmentDirections.actionDiseaseControlFragmentToNcdFragment()
         ),

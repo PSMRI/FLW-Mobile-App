@@ -425,6 +425,12 @@
     <string name="eligible_couple_tracking_list">लक्ष्य दम्पति ट्रैकिंग सूची</string>
     <string name="eligible_couple_tracking_form">लक्ष्य दम्पति ट्रैकिंग / फॉलो-अप फॉर्म</string>
     <string name="tb_screening_list">टीबी स्क्रीनिंग सूची</string>
+    <string name="tb_screening_presumptive_block">पहले से स्क्रीन किया गया लाभार्थी पहले से ही संभावित टीबी मामलों की सूची में है।</string>
+    <string name="tb_screening_confirm_followup_not_started">टीबी पुष्ट मामलों में उपचार का फॉलो-अप अभी शुरू नहीं हुआ है। उपचार पूरा होने की तिथि: %1$s।</string>
+    <string name="tb_screening_confirm_treatment_ongoing">लाभार्थी का उपचार जारी है। उपचार पूरा होने की तिथि: %1$s।</string>
+    <string name="tb_screening_tpt_followup_not_started">टीपीटी पुष्ट मामलों में उपचार का फॉलो-अप अभी शुरू नहीं हुआ है। उपचार पूरा होने की तिथि: %1$s।</string>
+    <string name="tb_screening_tpt_treatment_ongoing">लाभार्थी का टीपीटी उपचार जारी है। उपचार पूरा होने की तिथि: %1$s।</string>
+    <string name="not_available">उपलब्ध नहीं</string>
     <string name="tb_suspected_list">संभावित टीबी केस</string>
     <string name="tb_screening_form">टीबी स्क्रीनिंग फॉर्म</string>
     <string name="tb_suspected_leprosy_case">कुष्ठ रोग का संदिग्ध मामला</string>
@@ -528,6 +534,7 @@
     <string name="leprosy_screening">कुष्ठ रोग जांच </string>
     <string name="home_visit_date_screening">गृह भ्रमण तिथि (जांच तिथि)</string>
     <string name="screening">जांच</string>
+    <string name="add_screening">स्क्रीनिंग जोड़ें</string>
     <string name="suspected">संदिग्ध</string>
     <string name="malaria_confirmed">पुष्टि हुई</string>
     <string name="malaria_not_confirmed">पुष्टि नहीं हुई</string>

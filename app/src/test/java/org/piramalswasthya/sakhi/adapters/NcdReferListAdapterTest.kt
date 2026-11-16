@@ -82,11 +82,13 @@ class NcdReferListAdapterTest {
         var capturedHhId: Long? = null
         var capturedReason: String? = null
         var capturedReferredDate: Long? = null
-        val listener = NcdReferListAdapter.NcdReferallickListener { benId, hhId, referReason, referredDate, _ ->
+        var capturedIsViewMode: Boolean? = null
+        val listener = NcdReferListAdapter.NcdReferallickListener { benId, hhId, referReason, referredDate, _, isViewMode ->
             capturedBenId = benId
             capturedHhId = hhId
             capturedReason = referReason
             capturedReferredDate = referredDate
+            capturedIsViewMode = isViewMode
         }
         val referral = referalCache(benId = 7L).apply {
             referralReason = "TB Screening Form"
@@ -97,6 +99,19 @@ class NcdReferListAdapterTest {
         assertEquals(11L, capturedHhId)
         assertEquals("TB Screening Form", capturedReason)
         assertEquals(123L, capturedReferredDate)
+        assertEquals(false, capturedIsViewMode)
+    }
+
+    @Test
+    fun clickListener_passesViewFollowUpMode() {
+        var capturedIsViewMode: Boolean? = null
+        val listener = NcdReferListAdapter.NcdReferallickListener { _, _, _, _, _, isViewMode ->
+            capturedIsViewMode = isViewMode
+        }
+
+        listener.onClickedFollowUp(benBasic(), referalCache(), isViewMode = true)
+
+        assertEquals(true, capturedIsViewMode)
     }
 
     @Test
@@ -106,7 +121,7 @@ class NcdReferListAdapterTest {
         try {
             val adapter = NcdReferListAdapter(
                 userName = "ASHA",
-                listener = NcdReferListAdapter.NcdReferallickListener { _, _, _, _, _ -> },
+                listener = NcdReferListAdapter.NcdReferallickListener { _, _, _, _, _, _ -> },
                 visible = true
             )
             assertEquals(0, adapter.itemCount)

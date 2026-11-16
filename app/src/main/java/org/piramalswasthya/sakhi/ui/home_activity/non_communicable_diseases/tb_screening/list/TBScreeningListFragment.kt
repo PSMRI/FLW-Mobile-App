@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.tb_screening.list
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -8,6 +9,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.LinearLayout
+import android.widget.TextView
+import android.graphics.Color
+import android.graphics.Typeface
+import android.graphics.drawable.GradientDrawable
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -48,13 +55,21 @@ class TBScreeningListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.btnNextPage.visibility = View.GONE
         val benAdapter = TbScreeningListAdapter(
-            TbScreeningListAdapter.ClickListener { hhId, benId ->
+            TbScreeningListAdapter.ClickListener { item, addNew ->
                 if (findNavController().currentDestination?.id == R.id.TBScreeningListFragment) {
-                    findNavController().navigate(
-                        TBScreeningListFragmentDirections.actionTBScreeningListFragmentToTBScreeningFormFragment(
-                            benId = benId
-                        )
-                    )
+                    if (addNew) {
+                        viewLifecycleOwner.lifecycleScope.launch {
+                            val blockMessage = viewModel.addScreeningBlockMessage(item)
+                            if (blockMessage != null) {
+                                AlertDialog.Builder(requireContext())
+                                    .setMessage(blockMessage)
+                                    .setPositiveButton(R.string.ok, null)
+                                    .show()
+                            } else if (findNavController().currentDestination?.id == R.id.TBScreeningListFragment) {
+                                findNavController().navigate(TBScreeningListFragmentDirections.actionTBScreeningListFragmentToTBScreeningFormFragment(item.ben.benId, -1, false))
+                            }
+                        }
+                    } else showScreeningHistory(item)
                 }
             }
         )
@@ -92,6 +107,35 @@ class TBScreeningListFragment : Fragment() {
                 (searchView as EditText).removeTextChangedListener(searchTextWatcher)
 
         }
+    }
+
+    private fun showScreeningHistory(item: org.piramalswasthya.sakhi.model.BenWithTbScreeningDomain) {
+        val dialog = BottomSheetDialog(requireContext())
+        val content = LinearLayout(requireContext()).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(32, 24, 32, 32)
+            background = GradientDrawable().apply {
+                setColor(Color.WHITE)
+                cornerRadii = floatArrayOf(32f, 32f, 32f, 32f, 0f, 0f, 0f, 0f)
+            }
+        }
+        item.tbRecords.sortedBy { it.visitDate }.forEachIndexed { index, record ->
+            content.addView(TextView(requireContext()).apply {
+                val date = java.text.SimpleDateFormat("dd MMM yyyy", java.util.Locale.getDefault())
+                    .format(java.util.Date(record.visitDate))
+                text = "${if (index == 0) "1" else "${index + 1}"} TB screening ($date)"
+                textSize = 16f
+                setTypeface(typeface, Typeface.BOLD)
+                setTextColor(Color.BLACK)
+                setPadding(12, 18, 12, 18)
+                setOnClickListener {
+                    dialog.dismiss()
+                    findNavController().navigate(TBScreeningListFragmentDirections.actionTBScreeningListFragmentToTBScreeningFormFragment(item.ben.benId, record.id, true))
+                }
+            })
+        }
+        dialog.setContentView(content)
+        dialog.show()
     }
 
     override fun onStart() {

@@ -32,7 +32,14 @@ class NCDReferalFormFragmentNavigationTest {
         unmockkConstructor(Bundle::class)
     }
 
-    private fun args() = NCDReferalFormFragmentArgs(benId = 10L, hhId = 20L, referReason = "TB Screening Form", referredDate = 30L)
+    private fun args(isViewMode: Boolean = false) = NCDReferalFormFragmentArgs(
+        benId = 10L,
+        hhId = 20L,
+        referReason = "TB Screening Form",
+        referredDate = 30L,
+        referralType = null,
+        isViewMode = isViewMode
+    )
 
     @Test
     fun constructor_exposesEveryArgument() {
@@ -41,6 +48,7 @@ class NCDReferalFormFragmentNavigationTest {
         assertEquals(20L, a.hhId)
         assertEquals("TB Screening Form", a.referReason)
         assertEquals(30L, a.referredDate)
+        assertFalse(a.isViewMode)
     }
 
     @Test
@@ -72,7 +80,15 @@ class NCDReferalFormFragmentNavigationTest {
         assertEquals(10L, handle.get<Long>("benId"))
         assertEquals(20L, handle.get<Long>("hhId"))
         assertEquals("TB Screening Form", handle.get<String>("referReason"))
+        assertEquals(false, handle.get<Boolean>("isViewMode"))
         assertEquals(args(), NCDReferalFormFragmentArgs.fromSavedStateHandle(handle))
+    }
+
+    @Test
+    fun fromSavedStateHandle_preservesViewFollowUpMode() {
+        val handle = args(isViewMode = true).toSavedStateHandle()
+
+        assertTrue(NCDReferalFormFragmentArgs.fromSavedStateHandle(handle).isViewMode)
     }
 
     @Test
@@ -105,6 +121,7 @@ class NCDReferalFormFragmentNavigationTest {
         every { bundle.getLong("hhId") } returns 20L
         every { bundle.getString("referReason") } returns "TB Screening Form"
         every { bundle.getLong("referredDate") } returns 30L
+        every { bundle.getBoolean("isViewMode") } returns false
         // Optional, nullable (General Check-up referrals pass GENERAL_CHECKUP); the relaxed mock would return "".
         every { bundle.getString("referralType") } returns null
         assertEquals(args(), NCDReferalFormFragmentArgs.fromBundle(bundle))
@@ -117,6 +134,16 @@ class NCDReferalFormFragmentNavigationTest {
         every { bundle.getString("referReason") } returns "General Check-up: Fever"
         every { bundle.getString("referralType") } returns "GENERAL_CHECKUP"
         assertEquals("GENERAL_CHECKUP", NCDReferalFormFragmentArgs.fromBundle(bundle).referralType)
+    }
+
+    @Test
+    fun fromBundle_readsViewFollowUpMode() {
+        every { bundle.containsKey(any()) } returns true
+        every { bundle.getLong(any()) } returns 10L
+        every { bundle.getString("referReason") } returns "TB Screening Form"
+        every { bundle.getBoolean("isViewMode") } returns true
+
+        assertTrue(NCDReferalFormFragmentArgs.fromBundle(bundle).isViewMode)
     }
 
     @Test

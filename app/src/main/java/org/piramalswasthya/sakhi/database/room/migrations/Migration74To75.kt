@@ -9,6 +9,7 @@ import org.piramalswasthya.sakhi.database.room.migrations.MigrationHelpers.colum
 // are linked when the beneficiary has exactly one General Check-up referral.
 object Migration74To75 : Migration(74, 75) {
     override fun migrate(database: SupportSQLiteDatabase) {
+        Migration73To74.migrate(database)
         if (!columnExists(database, "gc_referral_follow_up", "referralReason")) {
             database.execSQL("ALTER TABLE gc_referral_follow_up ADD COLUMN referralReason TEXT NOT NULL DEFAULT ''")
         }
