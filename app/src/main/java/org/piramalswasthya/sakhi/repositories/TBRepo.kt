@@ -40,6 +40,14 @@ class TBRepo @Inject constructor(
         }
     }
 
+    suspend fun getAllTBScreenings(benId: Long): List<TBScreeningCache> = withContext(Dispatchers.IO) {
+        tbDao.getAllTbScreenings(benId)
+    }
+
+    suspend fun getTBScreeningById(id: Int): TBScreeningCache? = withContext(Dispatchers.IO) {
+        tbDao.getTbScreeningById(id)
+    }
+
     suspend fun saveTBScreening(tbScreeningCache: TBScreeningCache) {
         withContext(Dispatchers.IO) {
             tbDao.saveTbScreening(tbScreeningCache)

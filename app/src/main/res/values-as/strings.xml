@@ -182,6 +182,12 @@
     <string name="eligible_couple_tracking_list">যোগ্য জনপৰা পৰাৰ ট্ৰেকিং তালিকা</string>
     <string name="eligible_couple_tracking_form">যোগ্য জনপৰা পৰাৰ ট্ৰেকিং ফৰ্ম</string>
     <string name="tb_screening_list">TB স্ক্ৰীনিং তালিকা</string>
+    <string name="tb_screening_presumptive_block">আগতে স্ক্ৰীন কৰা হিতাধিকাৰী ইতিমধ্যে সম্ভাৱ্য TB কেছৰ তালিকাত আছে।</string>
+    <string name="tb_screening_confirm_followup_not_started">TB নিশ্চিত কেছত চিকিৎসাৰ ফ’ল’-আপ এতিয়াও আৰম্ভ হোৱা নাই। চিকিৎসা সম্পূৰ্ণ হোৱাৰ তাৰিখ: %1$s।</string>
+    <string name="tb_screening_confirm_treatment_ongoing">হিতাধিকাৰীৰ চিকিৎসা চলি আছে। চিকিৎসা সম্পূৰ্ণ হোৱাৰ তাৰিখ: %1$s।</string>
+    <string name="tb_screening_tpt_followup_not_started">TPT নিশ্চিত কেছত চিকিৎসাৰ ফ’ল’-আপ এতিয়াও আৰম্ভ হোৱা নাই। চিকিৎসা সম্পূৰ্ণ হোৱাৰ তাৰিখ: %1$s।</string>
+    <string name="tb_screening_tpt_treatment_ongoing">হিতাধিকাৰীৰ TPT চিকিৎসা চলি আছে। চিকিৎসা সম্পূৰ্ণ হোৱাৰ তাৰিখ: %1$s।</string>
+    <string name="not_available">উপলব্ধ নহয়</string>
     <string name="tb_suspected_list">TB অনুমানিক তালিকা</string>
     <string name="tb_screening_form">TB স্ক্ৰীনিং ফৰ্ম</string>
     <string name="tb_suspected_form">TB অনুমানিক ৰূপ</string>
@@ -1280,6 +1286,7 @@
     <string name="add_home_visit">ঘৰ ভিজিট যোগ কৰক</string>
     <string name="view_home_visits">ঘৰ ভিজিট চাওক</string>
     <string name="screening">স্ক্ৰীনিং</string>
+    <string name="add_screening">স্ক্ৰীনিং যোগ কৰক</string>
     <string name="suspected">সন্দেহজনক</string>
     <string name="no_of_childrens">শিশুৰ সংখ্যা</string>
     <string name="marriage_date">বিবাহৰ তাৰিখ</string>
