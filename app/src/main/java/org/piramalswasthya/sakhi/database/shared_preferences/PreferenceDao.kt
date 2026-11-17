@@ -8,6 +8,7 @@ import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.Languages
+import org.piramalswasthya.sakhi.model.GamificationAccess
 import org.piramalswasthya.sakhi.model.LocationRecord
 import org.piramalswasthya.sakhi.model.User
 import timber.log.Timber
@@ -235,6 +236,80 @@ class PreferenceDao @Inject constructor(@ApplicationContext private val context:
             pref.edit().putBoolean("FIRST TIME FULL PULL DONE", value).apply()
         }
 
+    /**
+     * Badges: whether the first evaluation on this install has finished.
+     *
+     * That first run awards everything the ASHA's existing records already earned — a
+     * backfill of history, not a series of achievements — so it is the one run that must
+     * stay silent. Recorded explicitly rather than inferred from an empty BADGE_EARNED
+     * table, because those two are only the same thing until somebody's genuine first badge
+     * arrives on an empty table and gets swallowed as history.
+     */
+    var isBadgeBackfillDone: Boolean
+        get() = pref.getBoolean("BADGES FIRST EVALUATION DONE", false)
+        set(value) {
+            pref.edit().putBoolean("BADGES FIRST EVALUATION DONE", value).apply()
+        }
+
+    /**
+     * FLW-1251: the last gamification switches the server sent (inside getUserDetail),
+     * stored with the userId they belong to. The drawer logout keeps prefs, so readers
+     * must check that userId against the logged-in user. Cleared by [deleteForLogout].
+     */
+    fun saveGamificationAccess(access: GamificationAccess) {
+        pref.edit().putString(GAMIFICATION_ACCESS_KEY, Gson().toJson(access)).apply()
+    }
+
+    fun getGamificationAccess(): GamificationAccess? = try {
+        pref.getString(GAMIFICATION_ACCESS_KEY, null)
+            ?.let { Gson().fromJson(it, GamificationAccess::class.java) }
+    } catch (e: Exception) {
+        Timber.w(e, "Gamification: saved access unreadable, treating as none")
+        null
+    }
+
+    /**
+     * FLW-1251: developer override on debug/UAT builds ("ON" / "OFF"); null = follow the
+     * server. Only read by GamificationConfigProvider, which ignores it on release builds.
+     */
+    var gamificationDebugOverride: String?
+        get() = pref.getString(GAMIFICATION_DEBUG_OVERRIDE_KEY, null)
+        set(value) {
+            pref.edit().putString(GAMIFICATION_DEBUG_OVERRIDE_KEY, value).apply()
+        }
+
+    /**
+     * Monthly Recap: earliest moment THIS INSTALL can be considered to have been
+     * accumulating the ASHA's records locally. The recap counts rows in the local
+     * database, so a snapshot may only be frozen for a month this install was
+     * present for; see [org.piramalswasthya.sakhi.helpers.recapFreezeBlocker].
+     *
+     * Stamped once, then stable. Seeded from the package's first-install time so
+     * devices that have been in use for months are NOT blocked when this build
+     * lands, while a re-install (which resets first-install time) correctly reads
+     * as a new device. A bogus/future value is clamped to [nowMillis].
+     *
+     * Cleared with everything else by [deleteForLogout], which the sign-in flow
+     * pairs with clearAllTables() — so the marker and the database it describes
+     * are wiped together.
+     */
+    private val recapLocalDataSinceKey = "MONTHLY RECAP LOCAL DATA SINCE"
+
+    fun recapLocalDataSince(nowMillis: Long): Long {
+        val stored = pref.getLong(recapLocalDataSinceKey, 0L)
+        if (stored > 0L) return stored
+        val seed = firstInstallTimeMillis()?.takeIf { it in 1..nowMillis } ?: nowMillis
+        pref.edit().putLong(recapLocalDataSinceKey, seed).apply()
+        return seed
+    }
+
+    private fun firstInstallTimeMillis(): Long? = try {
+        context.packageManager.getPackageInfo(context.packageName, 0).firstInstallTime
+    } catch (e: Exception) {
+        Timber.w(e, "Monthly Recap: first-install time unavailable; treating install as new")
+        null
+    }
+
     var isDevModeEnabled: Boolean
         get() = pref.getBoolean("DEV-MODE", false)
         set(value) {
@@ -434,5 +509,10 @@ class PreferenceDao @Inject constructor(@ApplicationContext private val context:
 
     fun getAnmList(): String {
         return pref.getString("ANM_LIST", "") ?: ""
+    }
+
+    private companion object {
+        const val GAMIFICATION_ACCESS_KEY = "GAMIFICATION ACCESS"
+        const val GAMIFICATION_DEBUG_OVERRIDE_KEY = "GAMIFICATION DEBUG OVERRIDE"
     }
 }

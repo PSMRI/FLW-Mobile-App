@@ -11,7 +11,11 @@ import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.badges.domain.BadgeDates
+import org.piramalswasthya.sakhi.database.room.dao.BadgeDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.model.BadgeSyncLogCache
+import timber.log.Timber
 import org.piramalswasthya.sakhi.helpers.PerfTracer
 
 @HiltWorker
@@ -19,6 +23,7 @@ class UpdatePrefForPullCompleteWorker @AssistedInject constructor(
     @Assisted private val appContext: Context,
     @Assisted params: WorkerParameters,
     private val preferenceDao: PreferenceDao,
+    private val badgeDao: BadgeDao,
 ) : CoroutineWorker(appContext, params) {
 
     companion object {
@@ -36,6 +41,14 @@ class UpdatePrefForPullCompleteWorker @AssistedInject constructor(
             mapOf("type" to if (preferenceDao.isFullPullComplete) "incremental" else "first")
         )
         preferenceDao.isFullPullComplete = true
+        // Badges (LLD §3.1 Steady Syncer): log the successful sync week
+        try {
+            val now = System.currentTimeMillis()
+            badgeDao.insertSyncLog(BadgeSyncLogCache(BadgeDates.weekKey(now), now))
+            WorkerUtils.triggerAdHocBadgeEvaluation(appContext)
+        } catch (e: Exception) {
+            Timber.w(e, "Badges: sync-week log after full pull failed")
+        }
         return Result.success()
     }
 

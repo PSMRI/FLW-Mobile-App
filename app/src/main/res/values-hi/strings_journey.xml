@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="evening_notif_channel_name">दैनिक प्रतिबिंब</string>
+    <string name="journey_title">मेरी यात्रा</string>
+    <string name="journey_greeting">शुभ संध्या, %1$s</string>
+    <string name="journey_narrative_zero">समुदाय की निरंतर सेवा के लिए धन्यवाद।</string>
+    <string name="journey_narrative_one">आज आपने अपने समुदाय में सकारात्मक बदलाव लाया।</string>
+    <string name="journey_narrative_busy">आज आपने कई परिवारों का सहारा बनकर व्यस्त दिन बिताया। धन्यवाद!</string>
+    <string name="journey_today_count">आज दर्ज सेवाएँ: %1$d</string>
+    <string name="journey_lifetime_count">कुल दर्ज सेवाएँ: %1$d</string>
+    <string name="journey_badge_header">आपके बैज</string>
+    <string name="journey_view_all_badges">सभी बैज देखें</string>
+    <string name="badge_unlock_notification">बधाई हो, %1$s! आपने नया बैज हासिल किया: %2$s</string>
+</resources>

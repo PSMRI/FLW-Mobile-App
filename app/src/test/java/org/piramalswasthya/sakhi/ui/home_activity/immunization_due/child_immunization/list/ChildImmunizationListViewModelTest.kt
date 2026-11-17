@@ -20,6 +20,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
@@ -47,9 +48,13 @@ class ChildImmunizationListViewModelTest : BaseViewModelTest() {
 
     private lateinit var viewModel: ChildImmunizationListViewModel
 
+    private val earlyEntryDefault = ChildImmunizationCategory.earlyEntryEnabled
+
     @Before
     override fun setUp() {
         super.setUp()
+        // Unit tests run as debug; check the release minimum-age rules by default.
+        ChildImmunizationCategory.earlyEntryEnabled = false
         val realDefaultDispatcher = Dispatchers.Default
         mockkStatic(Dispatchers::class)
         every { Dispatchers.IO } returns testDispatcher
@@ -183,6 +188,33 @@ class ChildImmunizationListViewModelTest : BaseViewModelTest() {
         val details = vm.benWithVaccineDetails.first()
         assertEquals(VaccineState.OVERDUE, details[0].vaccineStateList[0].state)
         assertNotNull(details[0].vaccineStateList[0].dueDate)
+    }
+
+    @After
+    fun resetEarlyEntry() {
+        ChildImmunizationCategory.earlyEntryEnabled = earlyEntryDefault
+    }
+
+    @Test
+    fun `QA builds list entry-stage vaccines before their min age`() = runTest {
+        ChildImmunizationCategory.earlyEntryEnabled = true
+        val ben = benCache(benId = 1L, dobMillisAgo = 5 * day)
+        val cache = ChildImmunizationDetailsCache(ben = ben, givenVaccines = emptyList())
+        val vaccine = Vaccine(
+            vaccineId = 5,
+            vaccineName = "Pentavalent-1",
+            minAllowedAgeInMillis = 100 * day,
+            maxAllowedAgeInMillis = 200 * day,
+            category = ImmunizationCategory.CHILD,
+            immunizationService = ChildImmunizationCategory.WEEK_6,
+        )
+        every { vaccineDao.getBenWithImmunizationRecords(any(), any()) } returns flowOf(listOf(cache))
+        coEvery { vaccineDao.getVaccinesForCategory(ImmunizationCategory.CHILD) } returns listOf(vaccine)
+
+        val vm = ChildImmunizationListViewModel(vaccineDao, preferenceDao, context, SavedStateHandle())
+        advanceUntilIdle()
+
+        assertEquals(1, vm.benWithVaccineDetails.first()[0].vaccineStateList.size)
     }
 
     @Test

@@ -179,6 +179,7 @@ class HomeFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
+        viewModel.refreshServerFlagsIfDue()
         (activity as HomeActivity?)?.let { homeActivity ->
             homeActivity.addClickListenerToHomepageActionBarTitle()
             viewModel.locationRecord?.village?.let {

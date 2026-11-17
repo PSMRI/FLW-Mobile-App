@@ -102,6 +102,15 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    /**
+     * FLW-1251: Home shown again — re-read the server's gamification flag if the last
+     * fetch is old enough (throttled in [UserRepo.refreshUserDetailIfDue]).
+     */
+    fun refreshServerFlagsIfDue() {
+        val user = currentUser ?: return
+        viewModelScope.launch { userRepo.refreshUserDetailIfDue(user.userId) }
+    }
+
     fun logout() {
         viewModelScope.launch {
             pref.deleteLoginCred()

@@ -764,6 +764,59 @@ object WorkerUtils {
             )
     }
 
+    /**
+     * Badges module (LLD §2): nightly time-based re-evaluation + config/earned
+     * synchronization. Idempotent — safe to call on every home entry.
+     */
+    fun triggerBadgeWorkers(context: Context) {
+        val workManager = WorkManager.getInstance(context)
+        workManager.enqueueUniquePeriodicWork(
+            BadgeEvaluatorWorker.periodicName,
+            ExistingPeriodicWorkPolicy.KEEP,
+            PeriodicWorkRequest.Builder(BadgeEvaluatorWorker::class.java, 1, TimeUnit.DAYS)
+                .build()
+        )
+        workManager.enqueueUniqueWork(
+            BadgeSyncWorker.name,
+            ExistingWorkPolicy.KEEP,
+            syncRequestBuilder<BadgeSyncWorker>().build()
+        )
+    }
+
+    /**
+     * FLW-1251: badges switched off by the server — cancel the badge works scheduled by
+     * [triggerBadgeWorkers] / [triggerAdHocBadgeEvaluation] / [triggerBadgeSync].
+     * Local badge data is kept. Idempotent.
+     */
+    fun cancelBadgeWorkers(context: Context) {
+        val workManager = WorkManager.getInstance(context)
+        workManager.cancelUniqueWork(BadgeEvaluatorWorker.periodicName)
+        workManager.cancelUniqueWork(BadgeEvaluatorWorker.oneShotName)
+        workManager.cancelUniqueWork(BadgeSyncWorker.name)
+    }
+
+    /**
+     * Push a freshly earned badge now, so her other device can see it on its next
+     * sync instead of waiting for this app to be relaunched. REPLACE, not KEEP: a
+     * sync already queued may have been built before this award existed.
+     */
+    fun triggerBadgeSync(context: Context) {
+        WorkManager.getInstance(context).enqueueUniqueWork(
+            BadgeSyncWorker.name,
+            ExistingWorkPolicy.REPLACE,
+            syncRequestBuilder<BadgeSyncWorker>().build()
+        )
+    }
+
+    /** One-shot badge recompute, used after sync milestones. */
+    fun triggerAdHocBadgeEvaluation(context: Context) {
+        WorkManager.getInstance(context).enqueueUniqueWork(
+            BadgeEvaluatorWorker.oneShotName,
+            ExistingWorkPolicy.KEEP,
+            OneTimeWorkRequest.Builder(BadgeEvaluatorWorker::class.java).build()
+        )
+    }
+
     fun triggerAdHocPncEcUpdateWorker(context: Context) {
         val workRequest = OneTimeWorkRequest.Builder(UpdatePNCToECWorker::class.java).build()
         WorkManager.getInstance(context)

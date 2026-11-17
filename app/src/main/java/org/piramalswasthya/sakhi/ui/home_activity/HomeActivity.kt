@@ -14,8 +14,12 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.MotionEvent
+import android.app.Dialog
+import android.graphics.drawable.ColorDrawable
 import android.view.View
+import android.view.Window
 import android.view.WindowManager
+import android.view.animation.OvershootInterpolator
 import android.webkit.PermissionRequest
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceError
@@ -57,14 +61,23 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.badges.domain.BadgeCelebrations
+import org.piramalswasthya.sakhi.badges.domain.BadgeDefinitions
+import org.piramalswasthya.sakhi.badges.domain.TaskCompletionBus
+import org.piramalswasthya.sakhi.databinding.DialogBadgeCelebrationBinding
+import org.piramalswasthya.sakhi.notifications.NotificationEngine
+import org.piramalswasthya.sakhi.notifications.NotificationScheduler
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.AccountDeactivationManager
 import org.piramalswasthya.sakhi.helpers.TokenExpiryManager
 import org.piramalswasthya.sakhi.databinding.ActivityHomeBinding
 import org.piramalswasthya.sakhi.helpers.AnalyticsHelper
+import org.piramalswasthya.sakhi.helpers.GamificationConfigProvider
+import org.piramalswasthya.sakhi.helpers.GamificationRuntime
 import org.piramalswasthya.sakhi.helpers.ImageUtils
 import org.piramalswasthya.sakhi.helpers.InAppUpdateHelper
 import org.piramalswasthya.sakhi.helpers.Languages
@@ -93,6 +106,8 @@ import java.net.URI
 import java.util.Locale
 import javax.inject.Inject
 
+
+private const val CELEBRATION_MS = 3_500L
 
 @AndroidEntryPoint
 class HomeActivity : AppCompatActivity(), MessageUpdate {
@@ -129,6 +144,22 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 
     @Inject
     lateinit var tokenExpiryManager: TokenExpiryManager
+
+    @Inject
+    lateinit var taskCompletionBus: TaskCompletionBus
+
+    @Inject
+    lateinit var eveningNotificationScheduler: NotificationScheduler
+
+    @Inject
+    lateinit var badgeCelebrations: BadgeCelebrations
+
+    @Inject
+    lateinit var gamificationConfigProvider: GamificationConfigProvider
+
+    /** Starts/stops badge work and the evening alarm with the server flag (FLW-1251). */
+    @Inject
+    lateinit var gamificationRuntime: GamificationRuntime
 
     private var _binding: ActivityHomeBinding? = null
 
@@ -343,6 +374,14 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 
         askForPermissions()
 
+        // FLW-1251: the evening alarm (and the badge workers) now start/stop with the
+        // server flag — see observeGamificationState().
+        // eveningNotificationScheduler.schedule()
+        gamificationConfigProvider.refresh()
+        observeGamificationState()
+        routeToJourneyIfRequested(intent)
+        observeBadgeCelebrations()
+
         if (isChatSupportEnabled)
         {
             binding.addFab.visibility = View.VISIBLE
@@ -421,6 +460,8 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         super.onNewIntent(intent)
         setIntent(intent)
         handleNotificationDeeplink(intent)
+        // evening notification taps open the Journey screen (Notification LLD §1)
+        routeToJourneyIfRequested(intent)
     }
 
     /**
@@ -731,8 +772,116 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         invalidateOptionsMenu()
     }
 
+    /** Game-style centre-screen celebration when a badge milestone is earned. */
+    private fun observeBadgeCelebrations() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                badgeCelebrations.awards.collect { (badgeId, level) ->
+                    // FLW-1251: drop anything still queued after badges were switched off
+                    if (gamificationConfigProvider.state.value.badges) {
+                        showBadgeCelebration(badgeId, level)
+                    }
+                }
+            }
+        }
+    }
+
+    private suspend fun showBadgeCelebration(badgeId: String, level: Int) {
+        val def = BadgeDefinitions.byId(badgeId) ?: return
+        val cb = DialogBadgeCelebrationBinding.inflate(layoutInflater)
+        cb.ivCelebrationBadge.setImageResource(
+            def.tierIcons.getOrNull(level - 1) ?: def.iconRes
+        )
+        cb.tvCelebrationBadgeName.text = getString(def.titleRes)
+        if (level > 1) {
+            cb.tvCelebrationLevel.visibility = View.VISIBLE
+            cb.tvCelebrationLevel.text = getString(R.string.badge_level, level)
+        }
+        val dialog = Dialog(this).apply {
+            requestWindowFeature(Window.FEATURE_NO_TITLE)
+            setContentView(cb.root)
+            window?.setBackgroundDrawable(ColorDrawable(android.graphics.Color.TRANSPARENT))
+            window?.setDimAmount(0.6f)
+            setCancelable(true)
+        }
+        try {
+            dialog.show()
+            // pop-in with overshoot, like a game reward
+            cb.cvCelebration.scaleX = 0.5f
+            cb.cvCelebration.scaleY = 0.5f
+            cb.cvCelebration.alpha = 0f
+            cb.cvCelebration.animate().scaleX(1f).scaleY(1f).alpha(1f)
+                .setDuration(400)
+                .setInterpolator(OvershootInterpolator())
+                .start()
+            cb.confettiCelebration.burst()
+            delay(CELEBRATION_MS)
+        } catch (e: Exception) {
+            Timber.w(e, "Badge celebration overlay failed")
+        } finally {
+            if (dialog.isShowing) dialog.dismiss()
+        }
+    }
+
+    /**
+     * FLW-1251: gamification is switched per ASHA by the server. Applies the current
+     * switches now and again whenever they change (login, app open, debug override).
+     */
+    private fun observeGamificationState() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                gamificationConfigProvider.state.collect { applyGamificationState(it) }
+            }
+        }
+    }
+
+    private fun applyGamificationState(state: GamificationConfigProvider.State) {
+        // badge workers + table watcher, and the 21:00 alarm (see GamificationRuntime)
+        gamificationRuntime.apply(state)
+        binding.navView.menu.findItem(R.id.badgeShelfFragment)?.isVisible = state.badges
+    }
+
+    /**
+     * FLW-1251: debug/UAT builds only — long-press the employee id in the drawer header to
+     * cycle gamification between following the server, forced ON and forced OFF.
+     */
+    private fun setUpGamificationDebugOverride(idView: TextView) {
+        if (!gamificationConfigProvider.isDebugOverrideAllowed) return
+        idView.setOnLongClickListener {
+            val next = when (gamificationConfigProvider.debugOverride) {
+                GamificationConfigProvider.DebugOverride.SERVER -> GamificationConfigProvider.DebugOverride.ON
+                GamificationConfigProvider.DebugOverride.ON -> GamificationConfigProvider.DebugOverride.OFF
+                GamificationConfigProvider.DebugOverride.OFF -> GamificationConfigProvider.DebugOverride.SERVER
+            }
+            gamificationConfigProvider.debugOverride = next
+            Toast.makeText(this, "Gamification (debug): $next", Toast.LENGTH_SHORT).show()
+            true
+        }
+    }
+
+    /** Evening notification tap → Journey screen (Notification LLD §1). */
+    private fun routeToJourneyIfRequested(intent: Intent?) {
+        if (intent?.getBooleanExtra(NotificationEngine.EXTRA_OPEN_JOURNEY, false) == true) {
+            intent.removeExtra(NotificationEngine.EXTRA_OPEN_JOURNEY)
+            // FLW-1251: an older notification tapped after the server switched it off
+            if (!gamificationConfigProvider.state.value.notifications) return
+            // post: nav back-stack restore runs after onCreate and would wipe
+            // an immediate navigate; after first layout the graph is settled
+            binding.root.post {
+                try {
+                    navController.navigate(R.id.journeyFragment)
+                } catch (e: Exception) {
+                    Timber.e(e, "Journey navigation from notification failed")
+                }
+            }
+        }
+    }
+
     private fun setUpFirstTimePullWorker() {
         WorkerUtils.triggerPeriodicPncEcUpdateWorker(this)
+        // FLW-1251: started/stopped with the server flag in applyGamificationState()
+        // WorkerUtils.triggerBadgeWorkers(this)
+        // taskCompletionBus.start()
 //        WorkerUtils.triggerMaaMeetingWorker(this)
 //        WorkerUtils.triggerSaasBahuSammelanWorker(this)
         if (!pref.isFullPullComplete)
@@ -763,6 +912,7 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
                 HtmlCompat.FROM_HTML_MODE_LEGACY
             )
             headerView.findViewById<TextView>(R.id.tv_nav_id).text = formatted
+            setUpGamificationDebugOverride(headerView.findViewById(R.id.tv_nav_id))
 
 //            headerView.findViewById<TextView>(R.id.tv_nav_id).text =
 //                resources.getString(R.string.nav_item_3_text, it.userId)

@@ -13,6 +13,7 @@ import org.piramalswasthya.sakhi.database.converters.SyncStateConverter
 import org.piramalswasthya.sakhi.database.room.dao.ABHAGenratedDao
 import org.piramalswasthya.sakhi.database.room.dao.AdolescentHealthDao
 import org.piramalswasthya.sakhi.database.room.dao.AesDao
+import org.piramalswasthya.sakhi.database.room.dao.BadgeDao
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.BeneficiaryIdsAvailDao
 import org.piramalswasthya.sakhi.database.room.dao.CbacDao
@@ -20,6 +21,7 @@ import org.piramalswasthya.sakhi.database.room.dao.CdrDao
 import org.piramalswasthya.sakhi.database.room.dao.ChildRegistrationDao
 import org.piramalswasthya.sakhi.database.room.dao.DeliveryOutcomeDao
 import org.piramalswasthya.sakhi.database.room.dao.EcrDao
+import org.piramalswasthya.sakhi.database.room.dao.EveningNotifDao
 import org.piramalswasthya.sakhi.database.room.dao.FilariaDao
 import org.piramalswasthya.sakhi.database.room.dao.FpotDao
 import org.piramalswasthya.sakhi.database.room.dao.GeneralCheckupDao
@@ -37,6 +39,7 @@ import org.piramalswasthya.sakhi.database.room.dao.MaaMeetingDao
 import org.piramalswasthya.sakhi.database.room.dao.MalariaDao
 import org.piramalswasthya.sakhi.database.room.dao.MaternalHealthDao
 import org.piramalswasthya.sakhi.database.room.dao.MdsrDao
+import org.piramalswasthya.sakhi.database.room.dao.MonthlyRecapDao
 import org.piramalswasthya.sakhi.database.room.dao.MosquitoNetFormResponseDao
 import org.piramalswasthya.sakhi.database.room.dao.PmjayDao
 import org.piramalswasthya.sakhi.database.room.dao.PmsmaDao
@@ -58,6 +61,15 @@ import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponse
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseJsonDaoHBYC
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormSchemaDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.InfantDao
+import org.piramalswasthya.sakhi.model.BadgeConfigCache
+import org.piramalswasthya.sakhi.model.BadgeEarnedCache
+import org.piramalswasthya.sakhi.model.BadgeStateCache
+import org.piramalswasthya.sakhi.model.BadgeStreakFreezeCache
+import org.piramalswasthya.sakhi.model.BadgeSyncLogCache
+import org.piramalswasthya.sakhi.model.FormSaveLogCache
+import org.piramalswasthya.sakhi.model.MonthlyRecapCache
+import org.piramalswasthya.sakhi.model.NotifHistoryCache
+import org.piramalswasthya.sakhi.model.NotifTemplateCache
 import org.piramalswasthya.sakhi.model.ABHAModel
 import org.piramalswasthya.sakhi.helpers.DatabaseKeyManager
 import org.piramalswasthya.sakhi.helpers.PerfTracer
@@ -214,10 +226,22 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         TPTFollowUpEntity::class,
         NotificationEntity::class,
         GeneralCheckupCache::class,
-        GCReferralFollowUpEntity::class
+        GCReferralFollowUpEntity::class,
+        //Badges (LLD §4.1)
+        BadgeEarnedCache::class,
+        BadgeStateCache::class,
+        BadgeSyncLogCache::class,
+        BadgeStreakFreezeCache::class,
+        BadgeConfigCache::class,
+        //Evening Notification (Notification LLD §4)
+        NotifTemplateCache::class,
+        NotifHistoryCache::class,
+        FormSaveLogCache::class,
+        //Monthly Recap (Recap LLD §3)
+        MonthlyRecapCache::class
     ],
     views = [BenBasicCache::class],
-    version = 78, exportSchema = true
+    version = 79, exportSchema = true
 )
 
 @TypeConverters(
@@ -287,6 +311,11 @@ abstract class InAppDb : RoomDatabase() {
     abstract fun formResponseFilariaMDACampaignJsonDao(): FilariaMdaCampaignJsonDao
 
     abstract val syncDao: SyncDao
+
+    // Gamification
+    abstract val badgeDao: BadgeDao
+    abstract val eveningNotifDao: EveningNotifDao
+    abstract val monthlyRecapDao: MonthlyRecapDao
 
     companion object {
         @Volatile

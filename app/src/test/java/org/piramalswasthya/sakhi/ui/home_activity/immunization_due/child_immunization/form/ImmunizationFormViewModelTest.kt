@@ -23,6 +23,7 @@ import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import org.piramalswasthya.sakhi.badges.domain.TaskCompletionBus
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.ImmunizationDao
@@ -58,6 +59,9 @@ class ImmunizationFormViewModelTest : BaseViewModelTest() {
 
     @MockK
     private lateinit var benDao: BenDao
+
+    @MockK
+    private lateinit var taskCompletionBus: TaskCompletionBus
 
     private lateinit var user: User
     private lateinit var ben: BenRegCache
@@ -116,6 +120,7 @@ class ImmunizationFormViewModelTest : BaseViewModelTest() {
         coEvery { vaccineDao.addImmunizationRecord(any()) } returns Unit
         coEvery { vaccineDao.insertImmunizationRecord(any()) } returns longArrayOf(1L)
         coEvery { benDao.getBen(any()) } returns ben
+        every { taskCompletionBus.publish() } returns Unit
     }
 
     private fun buildVm(
@@ -129,7 +134,8 @@ class ImmunizationFormViewModelTest : BaseViewModelTest() {
             mapOf("vaccineId" to vaccineId, "benId" to benId, "category" to category)
         ),
         vaccineDao,
-        benDao
+        benDao,
+        taskCompletionBus
     )
 
     @Test

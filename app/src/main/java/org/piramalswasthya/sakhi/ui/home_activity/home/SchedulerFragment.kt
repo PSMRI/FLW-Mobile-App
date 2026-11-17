@@ -1,6 +1,9 @@
 package org.piramalswasthya.sakhi.ui.home_activity.home
 
 import android.os.Bundle
+import android.widget.Toast
+import org.piramalswasthya.sakhi.BuildConfig
+import org.piramalswasthya.sakhi.badges.BadgeDemoSeeder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,9 +12,22 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
+import android.view.HapticFeedbackConstants
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.CompositePageTransformer
+import androidx.viewpager2.widget.MarginPageTransformer
+import androidx.viewpager2.widget.ViewPager2
+import kotlin.math.abs
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.adapters.BadgeCarouselAdapter
+import org.piramalswasthya.sakhi.badges.BadgeRepository
 import org.piramalswasthya.sakhi.databinding.FragmentSchedulerBinding
+import timber.log.Timber
+import javax.inject.Inject
 import org.piramalswasthya.sakhi.ui.home_activity.home.SchedulerViewModel.State.LOADED
 import org.piramalswasthya.sakhi.ui.home_activity.home.SchedulerViewModel.State.LOADING
 import java.util.Calendar
@@ -33,6 +49,12 @@ class SchedulerFragment : Fragment() {
 
     private val viewModel: SchedulerViewModel by viewModels({ requireActivity() })
 
+    @Inject
+    lateinit var badgeRepository: BadgeRepository
+
+    @Inject
+    lateinit var demoSeeder: BadgeDemoSeeder
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -43,6 +65,7 @@ class SchedulerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setUpImpactDashboard()
         viewModel.state.observe(viewLifecycleOwner) {
             when (it) {
                 LOADING -> {
@@ -185,6 +208,100 @@ class SchedulerFragment : Fragment() {
             }.timeInMillis
             viewModel.setDate(calLong)
         }
+    }
+
+    /** Set by a drag or an arrow tap, consumed by the next page change — see [setUpImpactDashboard]. */
+    private var carouselMovedByUser = false
+
+    /** Impact Dashboard: badge progress carousel (arrow / swipe only — no auto-scroll). */
+    private fun setUpImpactDashboard() {
+        val carouselAdapter = BadgeCarouselAdapter()
+        binding.vpImpactBadges.adapter = carouselAdapter
+
+        // Haptics only on a drag or arrow tap — never on programmatic page changes.
+        fun step(direction: Int) {
+            val count = carouselAdapter.itemCount
+            if (count == 0) return
+            carouselMovedByUser = true
+            binding.vpImpactBadges.setCurrentItem(
+                (binding.vpImpactBadges.currentItem + direction + count) % count, true
+            )
+        }
+        binding.btnCarouselPrev.setOnClickListener { step(-1) }
+        binding.btnCarouselNext.setOnClickListener { step(+1) }
+
+        // card-deck feel: neighbours peek in, scale and fade with the swipe
+        binding.vpImpactBadges.apply {
+            offscreenPageLimit = 1 // one neighbour each side — enough for peek, lighter on low-RAM devices
+            (getChildAt(0) as? RecyclerView)?.apply {
+                val peek = (36 * resources.displayMetrics.density).toInt()
+                setPadding(peek, 0, peek, 0)
+                clipToPadding = false
+            }
+            setPageTransformer(CompositePageTransformer().apply {
+                addTransformer(MarginPageTransformer((12 * resources.displayMetrics.density).toInt()))
+                addTransformer { page, position ->
+                    val scale = 1f - 0.1f * abs(position)
+                    page.scaleX = scale
+                    page.scaleY = scale
+                    page.alpha = 1f - 0.3f * abs(position)
+                }
+            })
+            // gentle tactile tick as pages settle + "3 / 8" position counter
+            registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                override fun onPageScrollStateChanged(state: Int) {
+                    if (state == ViewPager2.SCROLL_STATE_DRAGGING) carouselMovedByUser = true
+                }
+
+                override fun onPageSelected(position: Int) {
+                    if (carouselMovedByUser) {
+                        performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
+                        carouselMovedByUser = false
+                    }
+                    _binding?.tvCarouselCounter?.text =
+                        "${position + 1} / ${carouselAdapter.itemCount}"
+                }
+            })
+        }
+        // debug-only presentation helper: long-press the title to stage demo progress
+        if (BuildConfig.DEBUG) binding.tvImpactTitle.setOnLongClickListener {
+            viewLifecycleOwner.lifecycleScope.launch {
+                val msg = try {
+                    demoSeeder.stage()
+                } catch (e: Exception) {
+                    "Demo staging failed: ${e.message}"
+                }
+                Toast.makeText(requireContext(), msg, Toast.LENGTH_LONG).show()
+            }
+            true
+        }
+        binding.cvImpactDashboard.setOnClickListener {
+            try {
+                findNavController().navigate(R.id.badgeShelfFragment)
+            } catch (e: Exception) {
+                Timber.e(e, "Badge shelf navigation from dashboard failed")
+            }
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                badgeRepository.shelf.collect { cards ->
+                    val b = _binding ?: return@collect
+                    // empty ⇔ badge feature killed remotely — hide cleanly
+                    b.cvImpactDashboard.visibility =
+                        if (cards.isEmpty()) View.GONE else View.VISIBLE
+                    carouselAdapter.submitList(cards.sortedByDescending { card ->
+                        val target = (card.state?.nextTarget ?: 1L).coerceAtLeast(1L)
+                        (card.state?.progress ?: 0L).toDouble() / target
+                    }) {
+                        val vp = _binding?.vpImpactBadges ?: return@submitList
+                        _binding?.tvCarouselCounter?.text =
+                            "${vp.currentItem + 1} / ${carouselAdapter.itemCount}"
+                    }
+                }
+            }
+        }
+        // No auto-advance — next/prev badges only via the navigation arrows
+        // (LAVA feedback: auto-scroll was distracting).
     }
 
     override fun onDestroyView() {

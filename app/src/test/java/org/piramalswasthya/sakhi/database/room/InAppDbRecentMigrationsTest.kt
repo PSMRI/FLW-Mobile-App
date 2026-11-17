@@ -76,7 +76,7 @@ class InAppDbRecentMigrationsTest {
     @Test
     fun `migrations form one unbroken chain up to the database version`() {
         val recent = ALL_MIGRATIONS.filter { it.startVersion >= 70 }.sortedBy { it.startVersion }
-        assertEquals((70..77).toList(), recent.map { it.startVersion })
+        assertEquals((70..78).toList(), recent.map { it.startVersion })
         recent.forEach { assertEquals(it.startVersion + 1, it.endVersion) }
     }
 

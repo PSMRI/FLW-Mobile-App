@@ -71,7 +71,7 @@ class DeliveryOutcomeViewModelTest : BaseViewModelTest() {
         coEvery { deliveryOutcomeRepo.getDeliveryOutcome(any()) } returns null
         coEvery { maternalHealthRepo.getLatestActiveRegistrationRecord(any()) } returns basePwr()
         coEvery { maternalHealthRepo.getLatestAncRecord(any()) } returns baseAnc()
-        viewModel = DeliveryOutcomeViewModel(savedStateHandle, preferenceDao, context, deliveryOutcomeRepo, ecrRepo, maternalHealthRepo, benRepo)
+        viewModel = DeliveryOutcomeViewModel(savedStateHandle, preferenceDao, context, deliveryOutcomeRepo, ecrRepo, maternalHealthRepo, benRepo, mockk(relaxed = true))
     }
 
     @Test fun `viewModel initializes successfully`() { assertNotNull(viewModel) }
@@ -135,7 +135,7 @@ class DeliveryOutcomeViewModelTest : BaseViewModelTest() {
     )
 
     private fun buildViewModel(): DeliveryOutcomeViewModel =
-        DeliveryOutcomeViewModel(savedStateHandle, preferenceDao, context, deliveryOutcomeRepo, ecrRepo, maternalHealthRepo, benRepo)
+        DeliveryOutcomeViewModel(savedStateHandle, preferenceDao, context, deliveryOutcomeRepo, ecrRepo, maternalHealthRepo, benRepo, mockk(relaxed = true))
 
     private fun baseSavedDeliveryOutcome(
         complication: String? = null,

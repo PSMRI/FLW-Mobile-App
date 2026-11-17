@@ -206,7 +206,7 @@ class ImmunizationFormFragment : Fragment(), OnCheckedChangeListener {
                     viewModel.list[position].isSwitchChecked = item.isSwitchChecked
                     var count = 0
                     viewModel.list.forEach {it->
-                          if (it.state.name == "PENDING" || it.state.name == "OVERDUE") {
+                          if (isEnterableVaccineState(it.state.name)) {
                              count++
                          }
                     }
@@ -385,7 +385,7 @@ class ImmunizationFormFragment : Fragment(), OnCheckedChangeListener {
     override fun onCheckedChanged(p0: CompoundButton, isChecked: Boolean) {
         if (isChecked) {
             viewModel.list.forEach { item ->
-                if (item.state.name == "PENDING" || item.state.name == "OVERDUE") {
+                if (isEnterableVaccineState(item.state.name)) {
                     item.isSwitchChecked = true
                     viewModel.vaccinationDoneList.add(item)
                 }
@@ -395,7 +395,7 @@ class ImmunizationFormFragment : Fragment(), OnCheckedChangeListener {
         } else {
             if (selectAll) {
                 viewModel.list.forEach { item ->
-                    if (item.state.name == "PENDING" || item.state.name == "OVERDUE") {
+                    if (isEnterableVaccineState(item.state.name)) {
                         item.isSwitchChecked = false
 
                         viewModel.vaccinationDoneList.removeIf { it ->
@@ -410,6 +410,17 @@ class ImmunizationFormFragment : Fragment(), OnCheckedChangeListener {
         }
         updateSubmitButtonVisibility()
         (binding.rvImmCat.adapter as ChildImmunizationVaccineAdapter).notifyDataSetChanged()
+    }
+
+    /**
+     * PENDING / OVERDUE are the normal enterable states. On UAT/debug builds also
+     * allow MISSED so past-max-age doses on older test children can still be saved
+     * when completing the full first-year schedule for the badge.
+     */
+    private fun isEnterableVaccineState(stateName: String): Boolean {
+        if (stateName == "PENDING" || stateName == "OVERDUE") return true
+        return (BuildConfig.DEBUG || BuildConfig.FLAVOR.contains("uat", ignoreCase = true)) &&
+                stateName == "MISSED"
     }
 
 }

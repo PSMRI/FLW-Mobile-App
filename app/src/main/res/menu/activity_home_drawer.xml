@@ -61,6 +61,14 @@
             android:icon="@drawable/ic__incentive"
             android:title="@string/incentive_fragment_title" />
 
+        <!-- The badge shelf is reached from here now. It used to be opened by a
+             progress strip on the Home grid, which spent a card's worth of space
+             on one badge and did nothing but navigate. -->
+        <item
+            android:id="@+id/badgeShelfFragment"
+            android:icon="@drawable/ic_badges"
+            android:title="@string/badge_shelf_title" />
+
         <item
             android:id="@+id/menu_support"
             android:checkable="false"

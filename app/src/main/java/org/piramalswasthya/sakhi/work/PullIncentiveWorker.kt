@@ -12,10 +12,14 @@ import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.badges.domain.BadgeDates
+import org.piramalswasthya.sakhi.database.room.dao.BadgeDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.setToStartOfTheDay
+import org.piramalswasthya.sakhi.model.BadgeSyncLogCache
 import org.piramalswasthya.sakhi.repositories.IncentiveRepo
 import java.util.Calendar
+import timber.log.Timber
 
 @HiltWorker
 class PullIncentiveWorker @AssistedInject constructor(
@@ -23,6 +27,7 @@ class PullIncentiveWorker @AssistedInject constructor(
     @Assisted params: WorkerParameters,
     private val incentiveRepo: IncentiveRepo,
     private val preferenceDao: PreferenceDao,
+    private val badgeDao: BadgeDao,
 ) : CoroutineWorker(appContext, params) {
 
     override suspend fun getForegroundInfo(): ForegroundInfo = createForegroundInfo()
@@ -43,6 +48,15 @@ class PullIncentiveWorker @AssistedInject constructor(
             )
         preferenceDao.lastIncentivePullTimestamp =
             Calendar.getInstance().setToStartOfTheDay().timeInMillis
+        // Badges (LLD §3.1 Steady Syncer): this worker only runs after every
+        // push group succeeded — log the successful sync week.
+        try {
+            val now = System.currentTimeMillis()
+            badgeDao.insertSyncLog(BadgeSyncLogCache(BadgeDates.weekKey(now), now))
+            WorkerUtils.triggerAdHocBadgeEvaluation(appContext)
+        } catch (e: Exception) {
+            Timber.w(e, "Badges: sync-week log after push failed")
+        }
         return Result.success()
     }
 

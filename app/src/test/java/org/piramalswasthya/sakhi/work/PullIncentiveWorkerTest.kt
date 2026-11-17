@@ -15,6 +15,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseRepositoryTest
+import org.piramalswasthya.sakhi.database.room.dao.BadgeDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.repositories.IncentiveRepo
 
@@ -24,6 +25,8 @@ class PullIncentiveWorkerTest : BaseRepositoryTest() {
     private val context: Context = mockk(relaxed = true)
     private val incentiveRepo: IncentiveRepo = mockk(relaxed = true)
     private val preferenceDao: PreferenceDao = mockk(relaxed = true)
+    // the badges module logs a sync week from this worker
+    private val badgeDao: BadgeDao = mockk(relaxed = true)
 
     @Before
     fun stubLoggedInUser() {
@@ -33,7 +36,7 @@ class PullIncentiveWorkerTest : BaseRepositoryTest() {
     private fun worker(attempt: Int = 0): PullIncentiveWorker {
         val params = mockk<WorkerParameters>(relaxed = true)
         every { params.runAttemptCount } returns attempt
-        return PullIncentiveWorker(context, params, incentiveRepo, preferenceDao)
+        return PullIncentiveWorker(context, params, incentiveRepo, preferenceDao, badgeDao)
     }
 
     @Test

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Evening Notification module + Journey screen -->
+    <string name="evening_notif_channel_name">Daily Reflection</string>
+    <string name="journey_title">My Journey</string>
+    <string name="journey_greeting">Good evening, %1$s</string>
+    <string name="journey_narrative_zero">Thank you for your continued service to your community.</string>
+    <string name="journey_narrative_one">You made a positive difference in your community today.</string>
+    <string name="journey_narrative_busy">You had a busy day supporting families today. Thank you!</string>
+    <string name="journey_today_count">Today\'s recorded services: %1$d</string>
+    <string name="journey_lifetime_count">Total recorded services: %1$d</string>
+    <string name="journey_badge_header">Your badges</string>
+    <string name="journey_view_all_badges">View all badges</string>
+    <string name="badge_unlock_notification">Congratulations, %1$s! You have earned a new badge: %2$s</string>
+</resources>
