@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import org.piramalswasthya.sakhi.R
@@ -16,6 +15,7 @@ import org.piramalswasthya.sakhi.configuration.IconDataset
 import org.piramalswasthya.sakhi.databinding.RvIconGridBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.home.HomeViewModel
+import org.piramalswasthya.sakhi.utils.safeNavigate
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -60,7 +60,7 @@ class HouseholdFragment : Fragment() {
         binding.rvIconGrid.layoutManager = rvLayoutManager
         val rvAdapter = IconGridAdapter(
             IconGridAdapter.GridIconClickListener {
-                findNavController().navigate(it)
+                safeNavigate(it)
             },
             viewLifecycleOwner.lifecycleScope
         )
@@ -78,7 +78,7 @@ class HouseholdFragment : Fragment() {
         binding.rvIconGrid.layoutManager = rvLayoutManager
         val rvAdapter = IconGridAdapter(
             IconGridAdapter.GridIconClickListener {
-                findNavController().navigate(it)
+                safeNavigate(it)
             },
             viewLifecycleOwner.lifecycleScope
         )
