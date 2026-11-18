@@ -46,7 +46,7 @@ class NewChildAsBenRegistrationFragment : Fragment() {
         val listIndex =
             viewModel.updateValueByIdAndReturnListIndex(micClickedElementId, formattedValue)
         listIndex.takeIf { it >= 0 }?.let {
-            binding.form.rvInputForm.adapter?.notifyItemChanged(it)
+            _binding?.form?.rvInputForm?.adapter?.notifyItemChanged(it)
         }
     }
 
@@ -179,7 +179,7 @@ class NewChildAsBenRegistrationFragment : Fragment() {
 
                         )
                 binding.form.rvInputForm.adapter = adapter
-                lifecycleScope.launch {
+                viewLifecycleOwner.lifecycleScope.launch {
                     viewModel.formList.collect {
                         Timber.Forest.d("Collecting $it")
                         if (it.isNotEmpty())
@@ -379,10 +379,9 @@ class NewChildAsBenRegistrationFragment : Fragment() {
         else if (!isGPSEnabled) showSettingsAlert()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         _binding = null
-
     }
 
 

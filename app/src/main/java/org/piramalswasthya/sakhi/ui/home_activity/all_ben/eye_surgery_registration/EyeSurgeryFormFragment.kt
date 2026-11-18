@@ -171,7 +171,7 @@
 
             binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-            lifecycleScope.launch {
+            viewLifecycleOwner.lifecycleScope.launch {
                 viewModel.schema.collectLatest { schema ->
                     if (schema == null) return@collectLatest
                     refreshAdapter()
@@ -325,8 +325,8 @@
             }
         }
 
-        override fun onDestroy() {
-            super.onDestroy()
+        override fun onDestroyView() {
+            super.onDestroyView()
             _binding = null
         }
     }

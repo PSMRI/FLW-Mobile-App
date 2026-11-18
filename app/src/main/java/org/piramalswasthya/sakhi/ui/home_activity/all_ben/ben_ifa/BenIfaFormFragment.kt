@@ -305,6 +305,7 @@ class BenIfaFormFragment : Fragment() {
 
         lifecycleScope.launch {
             viewModel.saveFormResponses(benId, hhId)
+            if (!isAdded) return@launch
             findNavController().previousBackStackEntry?.savedStateHandle?.set("form_submitted", true)
             findNavController().popBackStack()
         }
