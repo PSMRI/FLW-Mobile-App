@@ -112,4 +112,73 @@ class BodyCappedLoggingInterceptorTest {
         assertEquals(1, errors.size)
         assertTrue(errors[0].contains("API FAILED POST /api/save"))
     }
+
+    // ── FLW-1256: response bodies are previewed, never buffered whole ──────────
+
+    private val logged = mutableListOf<String>()
+    private val recordingLogger = okhttp3.logging.HttpLoggingInterceptor.Logger { logged += it }
+
+    private fun recordingClient(cap: Long = BodyCappedLoggingInterceptor.MAX_LOGGED_BODY_BYTES) =
+        OkHttpClient.Builder()
+            .addInterceptor(BodyCappedLoggingInterceptor(recordingLogger, maxLoggedBodyBytes = cap))
+            .readTimeout(5, TimeUnit.SECONDS)
+            .build()
+
+    @Test
+    fun `large response reaches the caller intact while only a bounded preview is logged`() {
+        val big = "{\"data\":\"" + "a".repeat(3 * 1024 * 1024) + "\"}"
+        server.enqueue(MockResponse().setBody(big))
+
+        val response = recordingClient().newCall(post("{}")).execute()
+
+        assertEquals(big, response.body?.string())
+        assertTrue(logged.isNotEmpty())
+        assertTrue("every log line is bounded", logged.all { it.length <= 4 * 1024 + 64 })
+        assertTrue(logged.any { it.startsWith("<-- BODY POST /api/save") })
+        assertTrue(logged.any { it.endsWith("...[truncated]") })
+    }
+
+    @Test
+    fun `small request and response bodies are logged in full`() {
+        server.enqueue(MockResponse().setBody("""{"statusCode":200,"data":"ok"}"""))
+
+        recordingClient().newCall(post("""{"benId":1}""")).execute().close()
+
+        assertTrue(logged.contains("""{"benId":1}"""))
+        assertTrue(logged.contains("""{"statusCode":200,"data":"ok"}"""))
+        assertTrue(logged.any { it.startsWith("--> POST") })
+        assertTrue(logged.any { it.startsWith("<-- 200") })
+    }
+
+    @Test
+    fun `oversized request body is not logged but the call still succeeds`() {
+        server.enqueue(MockResponse().setBody("ok"))
+
+        val response = recordingClient(cap = 10).newCall(post("x".repeat(100))).execute()
+
+        assertEquals("ok", response.body?.string())
+        assertTrue(logged.none { it.contains("x".repeat(100)) })
+        assertTrue(logged.none { it.startsWith("--> BODY") })
+        assertEquals(100, server.takeRequest().bodySize)
+    }
+
+    @Test
+    fun `binary response is not logged as text`() {
+        val bytes = ByteArray(64) { it.toByte() }
+        server.enqueue(MockResponse().setBody(okio.Buffer().write(bytes)))
+
+        val response = recordingClient().newCall(post("{}")).execute()
+
+        assertEquals(64, response.body?.bytes()?.size)
+        assertTrue(logged.contains("(binary body omitted)"))
+    }
+
+    @Test
+    fun `empty response body logs no body preview`() {
+        server.enqueue(MockResponse().setResponseCode(204))
+
+        recordingClient().newCall(post("{}")).execute().close()
+
+        assertTrue(logged.none { it.startsWith("<-- BODY") })
+    }
 }

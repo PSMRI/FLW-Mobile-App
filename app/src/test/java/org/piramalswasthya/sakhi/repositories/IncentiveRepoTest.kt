@@ -9,6 +9,9 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import okhttp3.ResponseBody
@@ -30,6 +33,8 @@ import retrofit2.Response
 import java.io.File
 import java.io.InputStream
 import java.nio.file.Files
+import java.net.SocketTimeoutException
+import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * Unit tests for [IncentiveRepo]. Consolidated from the previously separate
@@ -434,5 +439,63 @@ class IncentiveRepoTest : BaseRepositoryTest() {
 
         assertTrue(result.isFailure)
         assertEquals("No valid files to upload", result.exceptionOrNull()?.message)
+    }
+
+    // FLW-1256: pulls started at the same time (pull chain, push chain, IncentivesViewModel)
+    // must run one after another, so only one multi-MB response is in memory at a time.
+    @Test
+    fun `concurrent incentive pulls never overlap`() = runTest {
+        every { preferenceDao.getCurrentLanguage() } returns Languages.ENGLISH
+        coEvery { incentiveDao.getRecordCount() } returns 0
+        val inFlight = AtomicInteger(0)
+        val maxInFlight = AtomicInteger(0)
+        val calls = AtomicInteger(0)
+        val slowCall: suspend () -> Response<ResponseBody> = {
+            calls.incrementAndGet()
+            maxInFlight.accumulateAndGet(inFlight.incrementAndGet(), ::maxOf)
+            delay(50)
+            inFlight.decrementAndGet()
+            jsonResponse("""{"statusCode":5000,"errorMessage":"No record found"}""")
+        }
+        coEvery { amritApiService.getAllIncentiveRecords(requestBody = any()) } coAnswers { slowCall() }
+        coEvery { amritApiService.getAllIncentiveActivities(requestBody = any()) } coAnswers { slowCall() }
+        // Separate repo instances, as Hilt creates for each worker / ViewModel.
+        val other = IncentiveRepo(amritApiService, incentiveDao, preferenceDao, userRepo, context)
+
+        val results = listOf(
+            async { repo.pullAndSaveAllIncentiveRecords(mockk<User>(relaxed = true)) },
+            async { other.pullAndSaveAllIncentiveRecords(mockk<User>(relaxed = true)) },
+            async { other.pullAndSaveAllIncentiveActivities(mockk(relaxed = true)) },
+        ).awaitAll()
+
+        assertTrue(results.all { it })
+        assertEquals(3, calls.get())
+        assertEquals(1, maxInFlight.get())
+    }
+
+    // The timeout retry runs while the lock is held; it must not try to take it again.
+    @Test
+    fun `records timeout retry does not deadlock under the pull lock`() = runTest {
+        coEvery { incentiveDao.getRecordCount() } returns 0
+        coEvery { amritApiService.getAllIncentiveRecords(requestBody = any()) } throws
+            SocketTimeoutException("slow") andThen
+            jsonResponse("""{"statusCode":200,"errorMessage":"","data":"[]"}""")
+
+        // A deadlock would hang here until runTest's own timeout fails the test.
+        val result = repo.pullAndSaveAllIncentiveRecords(mockk<User>(relaxed = true))
+
+        assertTrue(result)
+    }
+
+    @Test
+    fun `activities timeout retry does not deadlock under the pull lock`() = runTest {
+        every { preferenceDao.getCurrentLanguage() } returns Languages.ENGLISH
+        coEvery { amritApiService.getAllIncentiveActivities(requestBody = any()) } throws
+            SocketTimeoutException("slow") andThen
+            jsonResponse("""{"statusCode":200,"errorMessage":"","data":"[]"}""")
+
+        val result = repo.pullAndSaveAllIncentiveActivities(mockk(relaxed = true))
+
+        assertTrue(result)
     }
 }

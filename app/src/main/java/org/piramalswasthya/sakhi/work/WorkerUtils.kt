@@ -115,7 +115,8 @@ object WorkerUtils {
     // record in SYNCING.)
     //
     // The skipRegistration full-sync path (login / home refresh) is a
-    // deliberate one-shot and bypasses the debounce.
+    // deliberate one-shot and bypasses the debounce. It still never overlaps a
+    // running push cycle (unique work with KEEP, see enqueuePushChain).
     fun triggerAmritPushWorker(context: Context, skipRegistration: Boolean = false) {
         if (skipRegistration) {
             enqueuePushChain(context, skipRegistration = true)
@@ -175,7 +176,20 @@ object WorkerUtils {
             val starter = OneTimeWorkRequestBuilder<GenerateBenIdsWorker>()
                 .build()
 
-            workManager.beginWith(starter)
+            // FLW-1256: this path used plain beginWith (not unique work), so it
+            // skipped both the SyncGateWorker debounce and the KEEP guard above.
+            // HomeActivity calls it every 2 min while any record stays unsynced,
+            // so full chains stacked, each ending in PullIncentiveWorker. The
+            // parallel incentive downloads ran the heap out of memory (OOM in
+            // OkHttp logging). It now shares the push cycle's unique name with
+            // KEEP: if a cycle is already active this trigger is dropped (that
+            // cycle pushes the same records), otherwise it starts one cycle.
+            // workManager.beginWith(starter)
+            workManager.beginUniqueWork(
+                pushWorkerUniqueName,
+                ExistingWorkPolicy.KEEP,
+                starter
+            )
         }
 
         // ─────────────────────────────────────────────────────────────

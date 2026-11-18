@@ -5,6 +5,8 @@ import android.net.Uri
 import com.google.gson.Gson
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import okhttp3.MultipartBody
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -43,8 +45,20 @@ class IncentiveRepo @Inject constructor(
     val list = incentiveDao.getAllRecords()
     val activity_list = incentiveDao.getAllActivity()
 
+    companion object {
+        // FLW-1256: incentive responses are several MB and each is copied a few times while
+        // parsing. The pull chain, the push chain and IncentivesViewModel can all start a pull
+        // at once; running them in parallel exhausted the heap (OutOfMemoryError). One lock for
+        // the whole process (this repo is not a singleton) runs them one after another.
+        private val incentivePullMutex = Mutex()
+    }
 
-    suspend fun pullAndSaveAllIncentiveActivities(user: User): Boolean {
+    suspend fun pullAndSaveAllIncentiveActivities(user: User): Boolean =
+        incentivePullMutex.withLock { pullAndSaveAllIncentiveActivitiesLocked(user) }
+
+    // Caller must hold incentivePullMutex. The timeout retry below calls this function, not the
+    // public one: Mutex is not re-entrant, so retrying through the public one would deadlock.
+    private suspend fun pullAndSaveAllIncentiveActivitiesLocked(user: User): Boolean {
         return withContext(Dispatchers.IO) {
             try {
                 val currentLang = preferenceDao.getCurrentLanguage().symbol
@@ -95,7 +109,7 @@ class IncentiveRepo @Inject constructor(
 
             } catch (e: SocketTimeoutException) {
                 Timber.e("incentives error : $e")
-                pullAndSaveAllIncentiveActivities(user)
+                pullAndSaveAllIncentiveActivitiesLocked(user)
                 return@withContext true
             } catch (e: Exception) {
                 Timber.d("Caught $e at incentives!")
@@ -115,7 +129,11 @@ class IncentiveRepo @Inject constructor(
 
     }
 
-    suspend fun pullAndSaveAllIncentiveRecords(user: User): Boolean {
+    suspend fun pullAndSaveAllIncentiveRecords(user: User): Boolean =
+        incentivePullMutex.withLock { pullAndSaveAllIncentiveRecordsLocked(user) }
+
+    // Caller must hold incentivePullMutex (see pullAndSaveAllIncentiveActivitiesLocked).
+    private suspend fun pullAndSaveAllIncentiveRecordsLocked(user: User): Boolean {
         return withContext(Dispatchers.IO) {
             try {
                 val localRecordCount = incentiveDao.getRecordCount()
@@ -183,7 +201,7 @@ class IncentiveRepo @Inject constructor(
                 }
             } catch (e: SocketTimeoutException) {
                 Timber.e("incentives error : $e")
-                pullAndSaveAllIncentiveRecords(user)
+                pullAndSaveAllIncentiveRecordsLocked(user)
                 return@withContext true
             } catch (e: Exception) {
                 Timber.d("Caught $e at incentives!")

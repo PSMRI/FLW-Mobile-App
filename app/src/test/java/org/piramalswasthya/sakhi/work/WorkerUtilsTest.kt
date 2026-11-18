@@ -79,7 +79,15 @@ class WorkerUtilsTest {
                 any<OneTimeWorkRequest>()
             )
         }
-        verify { workManager.beginWith(any<OneTimeWorkRequest>()) }
+        // FLW-1256: the full-sync path is unique KEEP work too, so it can never stack.
+        verify {
+            workManager.beginUniqueWork(
+                WorkerUtils.pushWorkerUniqueName,
+                ExistingWorkPolicy.KEEP,
+                any<OneTimeWorkRequest>()
+            )
+        }
+        verify(exactly = 0) { workManager.beginWith(any<OneTimeWorkRequest>()) }
     }
 
     @Test
@@ -96,15 +104,32 @@ class WorkerUtilsTest {
 
     @Test
     fun enqueuePushChain_startsWithBenIdGeneration_whenSkippingRegistration() {
+        val request = slot<OneTimeWorkRequest>()
+        every {
+            workManager.beginUniqueWork(any<String>(), any(), capture(request))
+        } returns mockk(relaxed = true)
         WorkerUtils.enqueuePushChain(context, skipRegistration = true)
-        verify { workManager.beginWith(any<OneTimeWorkRequest>()) }
-        verify(exactly = 0) {
+        assertEquals(
+            GenerateBenIdsWorker::class.java.name,
+            request.captured.workSpec.workerClassName
+        )
+    }
+
+    // FLW-1256: repeated full-sync triggers (HomeActivity fires one every 2 min while records
+    // stay unsynced) must not start parallel chains; KEEP on the shared push name lets
+    // WorkManager drop a trigger while a cycle is active.
+    @Test
+    fun enqueuePushChain_skippingRegistration_isUniqueKeepOnThePushName() {
+        repeat(3) { WorkerUtils.enqueuePushChain(context, skipRegistration = true) }
+        verify(exactly = 3) {
             workManager.beginUniqueWork(
-                any<String>(),
-                any(),
+                WorkerUtils.pushWorkerUniqueName,
+                ExistingWorkPolicy.KEEP,
                 any<OneTimeWorkRequest>()
             )
         }
+        verify(exactly = 0) { workManager.beginWith(any<OneTimeWorkRequest>()) }
+        verify(exactly = 0) { workManager.beginWith(any<List<OneTimeWorkRequest>>()) }
     }
 
     @Test
