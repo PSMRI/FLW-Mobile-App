@@ -327,7 +327,14 @@ data class UserDetailsInResponse(
     val blockName: String,
     val villageId: String,
     val villageName: String,
-    val facilityData: FacilityData? = null
+    val facilityData: FacilityData? = null,
+    /**
+     * FLW-1251: per-ASHA gamification switches. Kept as raw JSON (Map / Boolean / Double)
+     * on purpose: this response is parsed at login, and a strictly typed field with a
+     * wrong-typed value from the server would make Moshi fail the whole response and
+     * block login. [org.piramalswasthya.sakhi.helpers.GamificationAccessParser] reads it.
+     */
+    val gamification: Any? = null
 
 ) {
     fun toUser(password: String): User {

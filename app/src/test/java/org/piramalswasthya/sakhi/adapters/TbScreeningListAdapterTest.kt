@@ -59,22 +59,27 @@ class TbScreeningListAdapterTest {
     }
 
     @Test
-    fun clickListener_invokesLambdaWithHhIdAndBenId() {
-        var capturedHhId: Long? = null
-        var capturedBenId: Long? = null
-        val listener = TbScreeningListAdapter.ClickListener { hhId, benId ->
-            capturedHhId = hhId
-            capturedBenId = benId
+    fun clickListener_reportsAddAndViewActionsWithBeneficiary() {
+        var capturedItem: BenWithTbScreeningDomain? = null
+        var capturedAddAction: Boolean? = null
+        val listener = TbScreeningListAdapter.ClickListener { item, addAction ->
+            capturedItem = item
+            capturedAddAction = addAction
         }
-        listener.onClickForm(item(benId = 5L, hhId = 9L))
-        assertEquals(9L, capturedHhId)
-        assertEquals(5L, capturedBenId)
+        val beneficiary = item(benId = 5L, hhId = 9L)
+        listener.onClickAdd(beneficiary)
+        assertEquals(beneficiary, capturedItem)
+        assertEquals(true, capturedAddAction)
+        listener.onClickView(beneficiary)
+        assertEquals(beneficiary, capturedItem)
+        assertEquals(false, capturedAddAction)
     }
 
     @Test
     fun clickListener_withNullLambda_doesNotThrow() {
         val listener = TbScreeningListAdapter.ClickListener()
-        listener.onClickForm(item())
+        listener.onClickAdd(item())
+        listener.onClickView(item())
     }
 
     @Test

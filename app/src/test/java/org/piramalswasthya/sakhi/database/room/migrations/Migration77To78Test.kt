@@ -12,34 +12,25 @@ class Migration77To78Test {
 
     private val executedSql = mutableListOf<String>()
 
-    private val gamificationTables = listOf(
-        "BADGE_EARNED", "BADGE_STATE", "BADGE_SYNC_LOG", "BADGE_STREAK_FREEZE", "BADGE_CONFIG",
-        "notification_templates", "notification_history", "form_save_log", "MONTHLY_RECAP"
-    )
-
-    private fun columnCursor(columns: List<String>): Cursor {
-        val cursor = mockk<Cursor>(relaxed = true)
-        var index = -1
-        every { cursor.moveToNext() } answers {
-            index += 1
-            index < columns.size
-        }
-        every { cursor.getColumnIndexOrThrow("name") } returns 0
-        every { cursor.getString(0) } answers { columns[index] }
-        return cursor
-    }
-
-    private fun mockDb(tbScreeningColumns: List<String>): SupportSQLiteDatabase {
+    private fun mockDb(existingColumns: List<String> = emptyList()): SupportSQLiteDatabase {
         val db = mockk<SupportSQLiteDatabase>(relaxed = true)
         every { db.execSQL(any<String>()) } answers {
             executedSql.add(firstArg<String>())
             Unit
         }
-        every { db.query(any<String>()) } answers { columnCursor(tbScreeningColumns) }
+        every { db.query(any<String>()) } answers {
+            val cursor = mockk<Cursor>(relaxed = true)
+            var index = -1
+            every { cursor.moveToNext() } answers {
+                index += 1
+                index < existingColumns.size
+            }
+            every { cursor.getColumnIndexOrThrow("name") } returns 0
+            every { cursor.getString(0) } answers { existingColumns[index] }
+            cursor
+        }
         return db
     }
-
-    private val tbColumns = listOf("failureToGainWeight", "decreasedActivityOrPlayfulness")
 
     @Test
     fun `migrates from 77 to 78`() {
@@ -48,35 +39,34 @@ class Migration77To78Test {
     }
 
     @Test
-    fun `creates every gamification table idempotently`() {
-        Migration77To78.migrate(mockDb(tbColumns))
+    fun `creates the gc referral follow up table with its final columns when missing`() {
+        Migration77To78.migrate(mockDb())
 
-        gamificationTables.forEach { table ->
-            assertTrue(
-                "missing CREATE for $table",
-                executedSql.any { it.startsWith("CREATE TABLE IF NOT EXISTS `$table`") }
-            )
-        }
-        assertTrue(executedSql.all { it.contains("IF NOT EXISTS") })
+        assertEquals(2, executedSql.size)
+        val createTable = executedSql[0]
+        assertTrue(createTable.startsWith("CREATE TABLE IF NOT EXISTS `gc_referral_follow_up`"))
+        assertTrue(createTable.contains("`referralReason` TEXT NOT NULL DEFAULT ''"))
+        assertTrue(createTable.contains("`referralMonth` INTEGER NOT NULL DEFAULT 0"))
+        assertTrue(createTable.contains("`followUpStatus` TEXT,"))
+        assertEquals(
+            "CREATE UNIQUE INDEX IF NOT EXISTS `index_gc_referral_follow_up_benId_referralReason_referralMonth` " +
+                    "ON `gc_referral_follow_up` (`benId`, `referralReason`, `referralMonth`)",
+            executedSql[1]
+        )
     }
 
     @Test
-    fun `release device with tb screening columns gets no ALTER`() {
-        Migration77To78.migrate(mockDb(tbColumns))
+    fun `74 to 75 creates the table before altering it when an earlier build skipped it`() {
+        Migration74To75.migrate(mockDb())
+
+        assertTrue(executedSql[0].startsWith("CREATE TABLE IF NOT EXISTS `gc_referral_follow_up`"))
+        assertTrue(executedSql.indexOfFirst { it.startsWith("ALTER TABLE gc_referral_follow_up") } > 0)
+    }
+
+    @Test
+    fun `74 to 75 skips the column adds when the columns already exist`() {
+        Migration74To75.migrate(mockDb(listOf("referralReason", "referralMonth")))
 
         assertTrue(executedSql.none { it.startsWith("ALTER TABLE") })
-    }
-
-    @Test
-    fun `gamification v69 device gets the missing tb screening columns`() {
-        Migration77To78.migrate(mockDb(emptyList()))
-
-        assertEquals(
-            listOf(
-                "ALTER TABLE TB_SCREENING ADD COLUMN failureToGainWeight INTEGER DEFAULT NULL",
-                "ALTER TABLE TB_SCREENING ADD COLUMN decreasedActivityOrPlayfulness INTEGER DEFAULT NULL"
-            ),
-            executedSql.filter { it.startsWith("ALTER TABLE") }
-        )
     }
 }

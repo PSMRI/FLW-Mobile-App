@@ -12,6 +12,7 @@ import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.ImmunizationDao
 import org.piramalswasthya.sakhi.database.room.dao.SyncDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.helpers.GamificationConfigProvider
 import org.piramalswasthya.sakhi.helpers.PerfTracer
 import org.piramalswasthya.sakhi.helpers.NetworkResponse
 import org.piramalswasthya.sakhi.model.PeerAtFacility
@@ -35,7 +36,8 @@ class UserRepo @Inject constructor(
     private val vaccineDao: ImmunizationDao,
     private val preferenceDao: PreferenceDao,
     private val syncDao: SyncDao,
-    private val amritApiService: AmritApiService
+    private val amritApiService: AmritApiService,
+    private val gamificationConfigProvider: GamificationConfigProvider
 ) {
 
     val unProcessedRecordCount: Flow<List<SyncStatusCache>> = syncDao.getSyncStatus()
@@ -102,10 +104,23 @@ class UserRepo @Inject constructor(
         }
     }
 
+    /**
+     * FLW-1251: called whenever Home is shown. Re-reads getUserDetail (and with it the
+     * server's gamification flag) when the last fetch is old enough, so a change made on
+     * the server applies on the next Home open without restarting the app.
+     */
+    suspend fun refreshUserDetailIfDue(userId: Int) {
+        if (!gamificationConfigProvider.claimFlagRefresh(System.currentTimeMillis())) return
+        setFacilityData(userId)
+    }
+
      suspend fun setFacilityData(userId: Int) {
+         // FLW-1251: this fetch also delivers the gamification flag; count it as a refresh
+         gamificationConfigProvider.markFlagRefreshed(System.currentTimeMillis())
          try {
              val response = amritApiService.getUserDetailsById(userId = userId)
              val userData = response.data
+             saveGamificationFlag(userId, userData.gamification)
              val facilityData = userData.facilityData
              facilityData?.location?.let { location ->
 
@@ -179,10 +194,24 @@ class UserRepo @Inject constructor(
     }
 
 
+    /**
+     * FLW-1251: per-ASHA gamification switches from `getUserDetail`. Has its own
+     * try/catch because [setUserRole] runs inside login and must never fail because of it.
+     */
+    private fun saveGamificationFlag(userId: Int, rawGamification: Any?) {
+        try {
+            gamificationConfigProvider.onUserDetail(userId, rawGamification)
+        } catch (e: Exception) {
+            Timber.w(e, "Gamification: server flag not saved")
+        }
+    }
+
     private suspend fun setUserRole(userId: Int, password: String): User {
         val response = amritApiService.getUserDetailsById(userId = userId)
         val user = response.data.toUser(password)
         preferenceDao.registerUser(user)
+        // after registerUser, so the gamification state is computed for this user
+        saveGamificationFlag(userId, response.data.gamification)
         preferenceDao.saveStateId(response.data.stateId)
         val userData = response.data
         val facilityData = userData.facilityData

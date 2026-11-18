@@ -228,8 +228,18 @@ class TBScreeningFormViewModelTest : BaseViewModelTest() {
     fun `recordExists is true when tbRepo returns an existing screening`() {
         every { mockResources.getStringArray(any()) } returns arrayOf("Yes", "No")
         coEvery { benRepo.getBenFromId(any()) } returns baseBen()
-        coEvery { tbRepo.getTBScreening(any()) } returns TBScreeningCache(benId = 1L)
-        val vm = buildViewModel()
+        val screening = TBScreeningCache(benId = 1L)
+        coEvery { tbRepo.getTBScreeningById(7) } returns screening
+        val vm = TBScreeningFormViewModel(
+            SavedStateHandle(mapOf<String, Any>("benId" to 1L, "screeningId" to 7)),
+            preferenceDao,
+            context,
+            tbRepo,
+            benRepo,
+            cbacRepo,
+            referralStatusManager,
+            ncdReferalRepo
+        )
         testDispatcher.scheduler.advanceUntilIdle()
         assertEquals(true, vm.recordExists.value)
     }

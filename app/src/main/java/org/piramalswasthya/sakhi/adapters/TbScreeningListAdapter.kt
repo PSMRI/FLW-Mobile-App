@@ -94,6 +94,17 @@ class TbScreeningListAdapter(
 //            binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(if (item.tb == null) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
             binding.btnFormTb.dsFormState(if (item.tb == null) DsFormState.NOT_STARTED else DsFormState.SECONDARY) // Redesign: pending = filled · done = tonal (was red / green)
             binding.clickListener = clickListener
+            binding.btnAddScreening.visibility = if (item.tb != null && !item.ben.isDeath &&
+                System.currentTimeMillis() - item.tb.visitDate >= 30L * 24 * 60 * 60 * 1000
+            ) View.VISIBLE else View.GONE
+            binding.btnAddScreening.setBackgroundColor(
+                binding.root.resources.getColor(android.R.color.holo_green_dark)
+            )
+            binding.btnAddScreening.setOnClickListener { clickListener?.onClickAdd(item) }
+            binding.btnFormTb.setOnClickListener {
+                if (item.tb == null) clickListener?.onClickAdd(item)
+                else clickListener?.onClickView(item)
+            }
             binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
 
 
@@ -107,6 +118,7 @@ class TbScreeningListAdapter(
                 binding.cvContent.setCardBackgroundColor(ContextCompat.getColor(binding.root.context, R.color.ds_surface_container_high)) // Redesign: deceased = grey card
                 binding.ivSyncState.visibility = View.GONE
                 binding.btnFormTb.visibility = View.GONE
+                binding.btnAddScreening.visibility = View.GONE
             } else {
 //                binding.linearTbScreeningListLayout.setBackgroundColor(
 //                    ContextCompat.getColor(
@@ -134,11 +146,11 @@ class TbScreeningListAdapter(
 
 
     class ClickListener(
-        private val clickedForm: ((hhId: Long, benId: Long) -> Unit)? = null
+        private val clickedForm: ((BenWithTbScreeningDomain, Boolean) -> Unit)? = null
 
     ) {
-        fun onClickForm(item: BenWithTbScreeningDomain) =
-            clickedForm?.let { it(item.ben.hhId, item.ben.benId) }
+        fun onClickAdd(item: BenWithTbScreeningDomain) = clickedForm?.invoke(item, true)
+        fun onClickView(item: BenWithTbScreeningDomain) = clickedForm?.invoke(item, false)
     }
 
 }

@@ -84,9 +84,13 @@ class TBScreeningFormFragmentNavigationTest {
 
     @Test
     fun fromBundle_readsEveryArgument() {
-        every { bundle.containsKey(any()) } returns true
+        every { bundle.containsKey("benId") } returns true
+        every { bundle.containsKey("screeningId") } returns true
+        every { bundle.containsKey("readOnly") } returns true
         every { bundle.getLong("benId") } returns 10L
-        assertEquals(args(), TBScreeningFormFragmentArgs.fromBundle(bundle))
+        every { bundle.getInt("screeningId") } returns 42
+        every { bundle.getBoolean("readOnly") } returns true
+        assertEquals(TBScreeningFormFragmentArgs(benId = 10L, screeningId = 42, readOnly = true), TBScreeningFormFragmentArgs.fromBundle(bundle))
     }
 
     @Test

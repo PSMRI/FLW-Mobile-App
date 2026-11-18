@@ -1,15 +1,28 @@
 package org.piramalswasthya.sakhi.helpers
 
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig
-import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import org.piramalswasthya.sakhi.BuildConfig
-import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import timber.log.Timber
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
+ * FLW-1251 (2026-11-13) — SERVER-ONLY GATING. Every gamification part is now switched
+ * on/off per ASHA by the server, through the `gamification` object of
+ * `flw-api/user/getUserDetail` (read at login and on every app open, see
+ * [onUserDetail]). A part is ON only when the server's `enabled` AND that part's own
+ * switch are true. Until the server has sent a value for this ASHA, everything is OFF.
+ * The Firebase Remote Config design described below is retired; its code is kept,
+ * commented out, in this file.
+ *
+ * Debug and UAT builds have a developer override ([debugOverride]) so the feature can be
+ * shown or hidden without the backend; its default follows the server.
+ *
+ * --- Original design (Remote Config, retired) ---
+ *
  * ONE Remote Config provider for every gamification mechanic (Monthly Recap,
  * Badges, and — when built — Notifications and the Consistency Dashboard).
  *
@@ -31,106 +44,166 @@ import javax.inject.Singleton
  * and is preserved here so local dev/demo work is unaffected by this change.
  */
 @Singleton
-class GamificationConfigProvider @Inject constructor() {
+class GamificationConfigProvider @Inject constructor(
+    private val pref: PreferenceDao,
+) {
 
     enum class Mechanic(val remoteKey: String) {
         BADGES("badges_enabled"),
         MONTHLY_RECAP("monthly_recap_enabled"),
-        // Reserve the keys now so Notifications and the Consistency Dashboard
-        // need no new provider plumbing when their turn comes — only a new
-        // enum entry, a default in the XML, and one line at their gate.
         NOTIFICATIONS("notifications_enabled"),
         CONSISTENCY_DASHBOARD("consistency_dashboard_enabled"),
     }
+
+    /** What the logged-in ASHA may see right now. All false = gamification hidden. */
+    data class State(
+        val badges: Boolean = false,
+        val monthlyRecap: Boolean = false,
+        val notifications: Boolean = false,
+    ) {
+        fun isOn(mechanic: Mechanic): Boolean = when (mechanic) {
+            Mechanic.BADGES -> badges
+            Mechanic.MONTHLY_RECAP -> monthlyRecap
+            Mechanic.NOTIFICATIONS -> notifications
+            Mechanic.CONSISTENCY_DASHBOARD -> false // not built yet
+        }
+
+        companion object {
+            val ALL_OFF = State()
+            val ALL_ON = State(badges = true, monthlyRecap = true, notifications = true)
+        }
+    }
+
+    /** Developer override, honoured only on debug/UAT builds. */
+    enum class DebugOverride { SERVER, ON, OFF }
 
     companion object {
         const val KEY_MASTER_ENABLED = "gamification_master_enabled"
         const val KEY_PILOT_USER_IDS = "gamification_pilot_user_ids"
         /** Comma-separated userIds for a small QA cohort (window bypass, etc.). */
         const val KEY_TEST_COHORT_USER_IDS = "gamification_test_cohort_user_ids"
+
+        /** FLW-1251: minimum gap between server-flag fetches triggered by returning to Home. */
+        const val FLAG_REFRESH_INTERVAL_MS = 15 * 60 * 1000L
     }
 
-    private val remoteConfig: FirebaseRemoteConfig by lazy {
-        FirebaseRemoteConfig.getInstance().apply {
-            setConfigSettingsAsync(
-                remoteConfigSettings {
-                    // Rollout flags should reach a phone within the hour, not
-                    // wait for the app's default 12h Remote Config cache.
-                    minimumFetchIntervalInSeconds = TimeUnit.HOURS.toSeconds(1)
-                }
-            )
-            setDefaultsAsync(R.xml.remote_config_defaults)
-        }
-    }
+    /** Same rule as ChildImmunizationCategory.earlyEntryEnabled: debug or UAT flavours. */
+    val isDebugOverrideAllowed: Boolean =
+        BuildConfig.DEBUG || BuildConfig.FLAVOR.contains("uat", ignoreCase = true)
 
-    /**
-     * Call once, early (SakhiApplication.onCreate), off the main thread. A failed
-     * or slow fetch is NOT an error here — [remoteConfig] already holds the XML
-     * defaults until a fetch succeeds, so every caller of [isMechanicEnabled] is
-     * safe to use immediately after the app starts.
-     *
-     * Those defaults are ON. The console is therefore the kill switch rather than
-     * the on switch: a phone that never reaches Firebase runs the feature, and
-     * turning it off for everyone means publishing `gamification_master_enabled`
-     * as false and waiting out the one-hour fetch interval.
-     */
-    fun primeAsync() {
-        // Always fetch so UAT/debug QA builds pick up test-cohort / pilot lists from
-        // the console. [isMechanicEnabled] still forces every mechanic ON in DEBUG.
-        remoteConfig.fetchAndActivate()
-            .addOnCompleteListener { task ->
-                if (!task.isSuccessful) {
-                    Timber.w("GamificationConfigProvider: fetch failed, staying on cached/default values")
-                }
-            }
-    }
+    private val _state = MutableStateFlow(stateFor(loggedInUserId()))
+
+    /** Current switches for the logged-in ASHA; HomeActivity and the UI react to it. */
+    val state: StateFlow<State> = _state.asStateFlow()
 
     /**
      * The one gate every mechanic calls. [userId] is the currently logged-in
      * ASHA's id (null when nobody is logged in — always closed in that case).
      */
     fun isMechanicEnabled(mechanic: Mechanic, userId: Int?): Boolean {
-        if (BuildConfig.DEBUG) return true
-
-        val masterOn = safeBool(KEY_MASTER_ENABLED)
-        if (!masterOn) return false
-
-        val mechanicOn = safeBool(mechanic.remoteKey)
-        if (!mechanicOn) return false
-
-        return isUserInPilot(userId)
+        return stateFor(userId).isOn(mechanic)
     }
 
-    /** Empty allowlist = everyone (the intended state for full go-live). */
-    private fun isUserInPilot(userId: Int?): Boolean {
-        val ids = parseIdList(KEY_PILOT_USER_IDS) ?: return false
-        if (ids.isEmpty()) return true
-        return userId != null && userId.toString() in ids
+    /** [isMechanicEnabled] for whoever is logged in now (receivers, workers). */
+    fun isEnabledForLoggedInUser(mechanic: Mechanic): Boolean =
+        isMechanicEnabled(mechanic, loggedInUserId())
+
+    /**
+     * Called with the raw `data.gamification` object of every `getUserDetail` response
+     * (login and app open). A missing or unusable object is "no new decision": the last
+     * saved value stays. Never throws — this runs inside the login flow.
+     */
+    fun onUserDetail(userId: Int, rawGamification: Any?) {
+        try {
+            val access = GamificationAccessParser.parse(rawGamification, userId)
+            if (access == null) {
+                Timber.w("Gamification: no usable flag in getUserDetail, keeping last saved value")
+            } else {
+                pref.saveGamificationAccess(access)
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "Gamification: could not save server flag")
+        }
+        refresh()
+    }
+
+    /** When the server flag was last fetched (getUserDetail), epoch ms; 0 = not yet. */
+    @Volatile
+    private var lastFlagRefreshAt = 0L
+
+    /** Records a getUserDetail fetch that will deliver the flag (app open, Home refresh). */
+    fun markFlagRefreshed(nowMs: Long) {
+        lastFlagRefreshAt = nowMs
+    }
+
+    /**
+     * True (and records [nowMs]) when the flag should be fetched again because Home is
+     * shown and the last fetch is at least [FLAG_REFRESH_INTERVAL_MS] old. Keeps returning
+     * to Home from sending a getUserDetail request every time.
+     */
+    @Synchronized
+    fun claimFlagRefresh(nowMs: Long): Boolean {
+        val since = nowMs - lastFlagRefreshAt
+        if (lastFlagRefreshAt != 0L && since in 0 until FLAG_REFRESH_INTERVAL_MS) return false
+        lastFlagRefreshAt = nowMs
+        return true
+    }
+
+    fun refresh() {
+        val old = _state.value
+        val new = stateFor(loggedInUserId())
+        if (!old.badges && new.badges) {
+            pref.isBadgeBackfillDone = false
+        }
+        _state.value = new
+    }
+
+    var debugOverride: DebugOverride
+        get() {
+            if (!isDebugOverrideAllowed) return DebugOverride.SERVER
+            return DebugOverride.values().firstOrNull { it.name == pref.gamificationDebugOverride }
+                ?: DebugOverride.SERVER
+        }
+        set(value) {
+            if (!isDebugOverrideAllowed) return
+            pref.gamificationDebugOverride =
+                if (value == DebugOverride.SERVER) null else value.name
+            refresh()
+        }
+
+    private fun stateFor(userId: Int?): State {
+        if (userId == null) return State.ALL_OFF
+        when (debugOverride) {
+            DebugOverride.ON -> return State.ALL_ON
+            DebugOverride.OFF -> return State.ALL_OFF
+            DebugOverride.SERVER -> Unit
+        }
+        val access = pref.getGamificationAccess()?.takeIf { it.userId == userId }
+            ?: return State.ALL_OFF
+        if (!access.enabled) return State.ALL_OFF
+        return State(
+            badges = access.badges,
+            monthlyRecap = access.monthlyRecap,
+            notifications = access.eveningNotifications,
+        )
+    }
+
+    private fun loggedInUserId(): Int? = try {
+        pref.getLoggedInUser()?.userId
+    } catch (e: Exception) {
+        null
     }
 
     /**
      * True when [userId] is listed in [KEY_TEST_COHORT_USER_IDS]. Empty list =
      * nobody (unlike the pilot allowlist, which treats empty as everyone).
      * Used to bypass the Monthly Recap days 1–7 window for a small QA cohort.
+     *
+     * FLW-1251: the cohort list came from Remote Config, which is retired, so nobody is
+     * in it any more.
      */
+    @Suppress("UNUSED_PARAMETER")
     fun isTestCohortUser(userId: Int?): Boolean {
-        val ids = parseIdList(KEY_TEST_COHORT_USER_IDS) ?: return false
-        if (ids.isEmpty()) return false
-        return userId != null && userId.toString() in ids
-    }
-
-    /** Null on parse failure (fail closed); empty list when the key is blank. */
-    private fun parseIdList(key: String): List<String>? = try {
-        remoteConfig.getString(key).split(',').map { it.trim() }.filter { it.isNotEmpty() }
-    } catch (e: Exception) {
-        Timber.e(e, "GamificationConfigProvider: bad $key")
-        null
-    }
-
-    private fun safeBool(key: String): Boolean = try {
-        remoteConfig.getBoolean(key)
-    } catch (e: Exception) {
-        Timber.e(e, "GamificationConfigProvider: bad boolean for $key")
-        false // a corrupt value must fail closed, never fail open
+        return false
     }
 }

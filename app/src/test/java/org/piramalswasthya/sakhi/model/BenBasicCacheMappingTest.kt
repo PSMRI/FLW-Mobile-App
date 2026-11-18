@@ -299,6 +299,18 @@ class BenBasicCacheMappingTest {
         assertTrue(d.form1Filled)
     }
 
+    @Test fun `asBenBasicDomainModelForCdrForm maps spouseName and blanks to null`() {
+        assertEquals("Ramesh", ben(spouseName = "Ramesh").asBenBasicDomainModelForCdrForm().spouseName)
+        assertNull(ben(spouseName = "  ").asBenBasicDomainModelForCdrForm().spouseName)
+        assertNull(ben(spouseName = null).asBenBasicDomainModelForCdrForm().spouseName)
+    }
+
+    @Test fun `asBenBasicDomainModelForMdsrForm maps spouseName and blanks to null`() {
+        assertEquals("Ramesh", ben(spouseName = "Ramesh").asBenBasicDomainModelForMdsrForm().spouseName)
+        assertNull(ben(spouseName = "").asBenBasicDomainModelForMdsrForm().spouseName)
+        assertNull(ben(spouseName = null).asBenBasicDomainModelForMdsrForm().spouseName)
+    }
+
     @Test fun `asBenBasicDomainModelForPmsmaForm uses pmsma filled`() {
         val d = ben(pmsmaFilled = true).asBenBasicDomainModelForPmsmaForm()
         assertTrue(d.form1Filled)

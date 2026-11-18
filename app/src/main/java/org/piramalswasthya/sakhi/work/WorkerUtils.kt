@@ -784,6 +784,18 @@ object WorkerUtils {
     }
 
     /**
+     * FLW-1251: badges switched off by the server — cancel the badge works scheduled by
+     * [triggerBadgeWorkers] / [triggerAdHocBadgeEvaluation] / [triggerBadgeSync].
+     * Local badge data is kept. Idempotent.
+     */
+    fun cancelBadgeWorkers(context: Context) {
+        val workManager = WorkManager.getInstance(context)
+        workManager.cancelUniqueWork(BadgeEvaluatorWorker.periodicName)
+        workManager.cancelUniqueWork(BadgeEvaluatorWorker.oneShotName)
+        workManager.cancelUniqueWork(BadgeSyncWorker.name)
+    }
+
+    /**
      * Push a freshly earned badge now, so her other device can see it on its next
      * sync instead of waiting for this app to be relaunched. REPLACE, not KEEP: a
      * sync already queued may have been built before this award existed.

@@ -179,11 +179,12 @@ class BenWithScreeningDomainMappingTest {
     @Test fun `tbScreening domain with cache`() {
         val cache = TBScreeningCache(benId = 1L)
         val Suspectedcache = TBSuspectedCache(benId = 1L)
-        val benWithTbScreening = BenWithTbScreeningCache(ben(), cache,Suspectedcache)
+        val benWithTbScreening = BenWithTbScreeningCache(ben(), listOf(cache), Suspectedcache)
         assertEquals(1L, benWithTbScreening.ben.benId)
-        assertEquals(cache, benWithTbScreening.tb)
+        assertEquals(listOf(cache), benWithTbScreening.tbRecords)
         val d = benWithTbScreening.asTbScreeningDomainModel()
         assertEquals(cache, d.tb)
+        assertEquals(listOf(cache), d.tbRecords)
         assertEquals(1L, d.ben.benId)
     }
 
@@ -203,7 +204,7 @@ class BenWithScreeningDomainMappingTest {
         )
         val cache = BenWithTbScreeningCache(
             ben = ben(),
-            tb = null,
+            tbRecords = emptyList(),
             tbSuspected = null,
             cbacRecords = listOf(olderCbac, latestCbac),
             isPrisonResident = true
@@ -214,7 +215,7 @@ class BenWithScreeningDomainMappingTest {
     }
 
     @Test fun `tbScreening domain with null`() {
-        assertNull(BenWithTbScreeningCache(ben(), null,null).asTbScreeningDomainModel().tb)
+        assertNull(BenWithTbScreeningCache(ben(), emptyList(),null).asTbScreeningDomainModel().tb)
     }
 
     // ===================== TB suspected =====================

@@ -11,7 +11,7 @@ class MigrationsTest {
 
     @Test
     fun `registry lists all 65 migrations`() {
-        assertEquals(65, ALL_MIGRATIONS.size)
+        assertEquals(66, ALL_MIGRATIONS.size)
     }
 
     @Test
@@ -27,9 +27,9 @@ class MigrationsTest {
     }
 
     @Test
-    fun `oldest supported version is 13 and newest is 78`() {
+    fun `oldest supported version is 13 and newest is 79`() {
         assertEquals(13, ALL_MIGRATIONS.minOf { it.startVersion })
-        assertEquals(78, ALL_MIGRATIONS.maxOf { it.endVersion })
+        assertEquals(79, ALL_MIGRATIONS.maxOf { it.endVersion })
     }
 
     @Test
@@ -39,28 +39,28 @@ class MigrationsTest {
     }
 
     @Test
-    fun `every version from 13 to 77 has a path up to 78`() {
+    fun `every version from 13 to 78 has a path up to 79`() {
         val byStart = ALL_MIGRATIONS.groupBy { it.startVersion }
-        for (start in 13..77) {
+        for (start in 13..78) {
             var version = start
-            while (version < 78) {
+            while (version < 79) {
                 val next = byStart[version]?.maxOf { it.endVersion }
                 assertNotNull("no migration from $version", next)
                 version = next!!
             }
-            assertEquals(78, version)
+            assertEquals(79, version)
         }
     }
 
     @Test
-    fun `current production version 64 upgrades through 65 to 78 one step at a time`() {
+    fun `current production version 64 upgrades through 65 to 79 one step at a time`() {
         val path = mutableListOf(64)
         var version = 64
-        while (version < 78) {
+        while (version < 79) {
             version = ALL_MIGRATIONS.single { it.startVersion == version }.endVersion
             path.add(version)
         }
-        assertEquals(listOf(64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78), path)
+        assertEquals(listOf(64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79), path)
     }
 
     @Test
@@ -76,5 +76,6 @@ class MigrationsTest {
         assertTrue(ALL_MIGRATIONS.contains(Migration75To76))
         assertTrue(ALL_MIGRATIONS.contains(Migration76To77))
         assertTrue(ALL_MIGRATIONS.contains(Migration77To78))
+        assertTrue(ALL_MIGRATIONS.contains(Migration78To79))
     }
 }

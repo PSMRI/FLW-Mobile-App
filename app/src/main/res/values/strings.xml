@@ -531,6 +531,12 @@
     <string name="eligible_couple_tracking_list">Eligible Couple Tracking List</string>
     <string name="eligible_couple_tracking_form">Eligible Couple Tracking Form</string>
     <string name="tb_screening_list">TB Screening List</string>
+    <string name="tb_screening_presumptive_block">Previously screened beneficiary is already present in presumptive TB cases.</string>
+    <string name="tb_screening_confirm_followup_not_started">Under TB confirm cases, treatment follow-up has not started. Treatment completion date: %1$s.</string>
+    <string name="tb_screening_confirm_treatment_ongoing">Beneficiary is under Ongoing treatment. Treatment completion date: %1$s.</string>
+    <string name="tb_screening_tpt_followup_not_started">Under TPT confirm cases, TPT treatment follow-up has not started. Treatment completion date: %1$s.</string>
+    <string name="tb_screening_tpt_treatment_ongoing">Beneficiary is under Ongoing TPT treatment. Treatment completion date: %1$s.</string>
+    <string name="not_available">Not available</string>
     <string name="tb_suspected_list">Presumptive TB cases</string>
     <string name="tb_screening_form">TB Screening Form</string>
     <string name="tb_suspected_copd_case">Suspected COPD case</string>
@@ -602,11 +608,11 @@
     <string name="d_during_abortion_or_within_6_weeks_after_abortion">d. During abortion or within 6 weeks after abortion</string>
     <string name="name_of_reporting_person">"Name of reporting Person "</string>
     <string name="designation">Designation</string>
-    <string name="verification_by_anm_of_the_respective_sub_center_that_death_of_women_occurred_during_pregnancy_or_within_42_days_of_delivery_abortion">Verification by ANM of the respective Sub-center that death of women occurred during pregnancy or within 42 days of delivery/abortion:</string>
+    <string name="verification_by_anm_of_the_respective_sub_center_that_death_of_women_occurred_during_pregnancy_or_within_42_days_of_delivery_abortion">Verification by ANM of the respective sub-center that death of women occurred during pregnancy or within 42 days of delivery/abortion:</string>
     <string name="name_of_anm">Name of ANM</string>
     <string name="name_of_the_sub_center">Name of the sub center</string>
-    <string name="mdsr_form_from_anm_1">MDSR form from ANM 1</string>
-    <string name="mdsr_form_from_anm_2">MDSR form from ANM 2</string>
+    <string name="mdsr_form_from_anm_1">ASHA Notification Form 1</string>
+    <string name="mdsr_form_from_anm_2">ASHA Notification Form 2</string>
     <string name="father_name">Father Name</string>
     <string name="age_of_woman">Age Of Woman</string>
     <string name="select_time">Select Time</string>
@@ -752,8 +758,8 @@
     <string name="name_of_the_child">Name of the Child</string>
     <string name="pincode">Pincode</string>
     <string name="signature_name_of_asha">Signature/Name of ASHA</string>
-    <string name="cdr_form_from_anm_1">CDR form from ANM 1</string>
-    <string name="cdr_form_from_anm_2">CDR form from ANM 2</string>
+    <string name="cdr_form_from_anm_1">ASHA Notification Form 1</string>
+    <string name="cdr_form_from_anm_2">ASHA Notification Form 2</string>
     <string name="add_wife">Register Wife</string>
     <string name="add_husband">Register Husband</string>
     <string name="hof">HOF</string>
@@ -1436,6 +1442,8 @@
 
     <string name="mda_form_campagain_title">Lymphatic Filariasis (LF) Mass Drug Administration (MDA) campaign</string>
     <string name="screening">Screening</string>
+    <string name="add_screening">Add screening</string>
+    <string name="view_screenings">View screenings</string>
     <string name="suspected">Suspected</string>
     <string name="malaria_confirmed">Confirmed</string>
     <string name="malaria_not_confirmed">Not Confirmed</string>

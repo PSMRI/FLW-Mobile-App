@@ -8,6 +8,7 @@ import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.Languages
+import org.piramalswasthya.sakhi.model.GamificationAccess
 import org.piramalswasthya.sakhi.model.LocationRecord
 import org.piramalswasthya.sakhi.model.User
 import timber.log.Timber
@@ -251,6 +252,33 @@ class PreferenceDao @Inject constructor(@ApplicationContext private val context:
         }
 
     /**
+     * FLW-1251: the last gamification switches the server sent (inside getUserDetail),
+     * stored with the userId they belong to. The drawer logout keeps prefs, so readers
+     * must check that userId against the logged-in user. Cleared by [deleteForLogout].
+     */
+    fun saveGamificationAccess(access: GamificationAccess) {
+        pref.edit().putString(GAMIFICATION_ACCESS_KEY, Gson().toJson(access)).apply()
+    }
+
+    fun getGamificationAccess(): GamificationAccess? = try {
+        pref.getString(GAMIFICATION_ACCESS_KEY, null)
+            ?.let { Gson().fromJson(it, GamificationAccess::class.java) }
+    } catch (e: Exception) {
+        Timber.w(e, "Gamification: saved access unreadable, treating as none")
+        null
+    }
+
+    /**
+     * FLW-1251: developer override on debug/UAT builds ("ON" / "OFF"); null = follow the
+     * server. Only read by GamificationConfigProvider, which ignores it on release builds.
+     */
+    var gamificationDebugOverride: String?
+        get() = pref.getString(GAMIFICATION_DEBUG_OVERRIDE_KEY, null)
+        set(value) {
+            pref.edit().putString(GAMIFICATION_DEBUG_OVERRIDE_KEY, value).apply()
+        }
+
+    /**
      * Monthly Recap: earliest moment THIS INSTALL can be considered to have been
      * accumulating the ASHA's records locally. The recap counts rows in the local
      * database, so a snapshot may only be frozen for a month this install was
@@ -481,5 +509,10 @@ class PreferenceDao @Inject constructor(@ApplicationContext private val context:
 
     fun getAnmList(): String {
         return pref.getString("ANM_LIST", "") ?: ""
+    }
+
+    private companion object {
+        const val GAMIFICATION_ACCESS_KEY = "GAMIFICATION ACCESS"
+        const val GAMIFICATION_DEBUG_OVERRIDE_KEY = "GAMIFICATION DEBUG OVERRIDE"
     }
 }

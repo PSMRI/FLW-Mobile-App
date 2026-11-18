@@ -8,6 +8,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import org.piramalswasthya.sakhi.database.room.dao.BadgeDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.helpers.GamificationConfigProvider
 import org.piramalswasthya.sakhi.model.BadgeConfigCache
 import org.piramalswasthya.sakhi.model.BadgeEarnedCache
 import org.piramalswasthya.sakhi.model.BadgeStreakFreezeCache
@@ -31,7 +32,8 @@ class BadgeSyncWorker @AssistedInject constructor(
     @Assisted params: WorkerParameters,
     private val api: BadgeApiService,
     private val badgeDao: BadgeDao,
-    private val pref: PreferenceDao
+    private val pref: PreferenceDao,
+    private val gamificationConfigProvider: GamificationConfigProvider
 ) : CoroutineWorker(appContext, params) {
 
     companion object {
@@ -39,6 +41,14 @@ class BadgeSyncWorker @AssistedInject constructor(
     }
 
     override suspend fun doWork(): Result {
+        // FLW-1251: badges switched off by the server for this ASHA — no badge API calls.
+        if (!gamificationConfigProvider.isEnabledForLoggedInUser(
+                GamificationConfigProvider.Mechanic.BADGES
+            )
+        ) {
+            Timber.d("Badges: sync skipped — switched off for this ASHA")
+            return Result.success()
+        }
         val now = System.currentTimeMillis()
 
         try {

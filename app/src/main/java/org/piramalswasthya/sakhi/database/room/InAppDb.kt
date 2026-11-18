@@ -241,7 +241,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         MonthlyRecapCache::class
     ],
     views = [BenBasicCache::class],
-    version = 78, exportSchema = true
+    version = 79, exportSchema = true
 )
 
 @TypeConverters(

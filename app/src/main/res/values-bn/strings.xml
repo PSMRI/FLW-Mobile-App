@@ -475,6 +475,12 @@
     <string name="eligible_couple_tracking_list">যোগ্য দম্পতি ট্র্যাকিং তালিকা</string>
     <string name="eligible_couple_tracking_form">যোগ্য দম্পতি ট্র্যাকিং ফর্ম</string>
     <string name="tb_screening_list">TB স্ক্রিনিং তালিকা</string>
+    <string name="tb_screening_presumptive_block">আগে স্ক্রিন করা উপভোক্তা ইতিমধ্যেই সম্ভাব্য TB কেসের তালিকায় রয়েছেন।</string>
+    <string name="tb_screening_confirm_followup_not_started">TB নিশ্চিত কেসে চিকিৎসার ফলো-আপ এখনও শুরু হয়নি। চিকিৎসা সম্পূর্ণ হওয়ার তারিখ: %1$s।</string>
+    <string name="tb_screening_confirm_treatment_ongoing">উপভোক্তার চিকিৎসা চলছে। চিকিৎসা সম্পূর্ণ হওয়ার তারিখ: %1$s।</string>
+    <string name="tb_screening_tpt_followup_not_started">TPT নিশ্চিত কেসে চিকিৎসার ফলো-আপ এখনও শুরু হয়নি। চিকিৎসা সম্পূর্ণ হওয়ার তারিখ: %1$s।</string>
+    <string name="tb_screening_tpt_treatment_ongoing">উপভোক্তার TPT চিকিৎসা চলছে। চিকিৎসা সম্পূর্ণ হওয়ার তারিখ: %1$s।</string>
+    <string name="not_available">উপলব্ধ নয়</string>
     <string name="tb_suspected_list">সন্দেহের TB রোগী</string>
     <string name="tb_screening_form">TB স্ক্রিনিং ফর্ম</string>
     <string name="tb_confirmed_list">নিশ্চিত TB তালিকা</string>
@@ -541,8 +547,8 @@
     <string name="verification_by_anm_of_the_respective_sub_center_that_death_of_women_occurred_during_pregnancy_or_within_42_days_of_delivery_abortion">সংশ্লিষ্ট সাব-সেন্টারের ANM কর্তৃক যাচাইকরণ যে মহিলার মৃত্যু গর্ভাবস্থায় বা প্রসব/গর্ভপাতের ৪২ দিনের মধ্যে হয়েছে:</string>
     <string name="name_of_anm">ANM-এর নাম</string>
     <string name="name_of_the_sub_center">সাব-সেন্টারের নাম</string>
-    <string name="mdsr_form_from_anm_1">ANM থেকে MDSR ফর্ম ১</string>
-    <string name="mdsr_form_from_anm_2">ANM থেকে MDSR ফর্ম ২</string>
+    <string name="mdsr_form_from_anm_1">আশা বিজ্ঞপ্তি ফর্ম ১</string>
+    <string name="mdsr_form_from_anm_2">আশা বিজ্ঞপ্তি ফর্ম ২</string>
     <string name="father_name">পিতার নাম</string>
     <string name="age_of_woman">মহিলার বয়স</string>
     <string name="when_did_death_occur">মৃত্যু কখন হয়েছিল</string>
@@ -682,8 +688,8 @@
     <string name="name_of_the_child">শিশুর নাম</string>
     <string name="pincode">পিনকোড</string>
     <string name="signature_name_of_asha">আশার স্বাক্ষর/নাম</string>
-    <string name="cdr_form_from_anm_1">ANM থেকে CDR ফর্ম ১</string>
-    <string name="cdr_form_from_anm_2">ANM থেকে CDR ফর্ম ২</string>
+    <string name="cdr_form_from_anm_1">আশা বিজ্ঞপ্তি ফর্ম ১</string>
+    <string name="cdr_form_from_anm_2">আশা বিজ্ঞপ্তি ফর্ম ২</string>
     <string name="add_wife">স্ত্রী নিবন্ধন করুন</string>
     <string name="add_husband">স্বামী নিবন্ধন করুন</string>
     <string name="hof">পরিবারের প্রধান</string>
@@ -1298,6 +1304,7 @@
 
     <string name="mda_form_campagain_title">লিম্ফ্যাটিক ফাইলেরিয়াসিস (LF) গণ ওষুধ প্রশাসন (MDA) অভিযান</string>
     <string name="screening">স্ক্রিনিং</string>
+    <string name="add_screening">স্ক্রিনিং যোগ করুন</string>
     <string name="suspected">সন্দেহজনক</string>
     <string name="malaria_confirmed">নিশ্চিত</string>
     <string name="malaria_not_confirmed">নিশ্চিত নয়</string>

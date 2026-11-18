@@ -163,7 +163,7 @@ class MdsrObjectFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        (activity as? HomeActivity)?.updateActionBar(R.drawable.ic__death, getString(R.string.mdsr))
+        (activity as? HomeActivity)?.updateActionBar(R.drawable.maternal_death_s1, getString(R.string.mdsr))
     }
 
     override fun onDestroy() {

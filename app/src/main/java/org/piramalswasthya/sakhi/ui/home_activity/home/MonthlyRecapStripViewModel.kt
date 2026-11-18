@@ -6,11 +6,14 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import org.piramalswasthya.sakhi.helpers.GamificationConfigProvider
 import org.piramalswasthya.sakhi.helpers.MonthlyRecapAvailabilityProvider
 import org.piramalswasthya.sakhi.helpers.RecapStoryGate
 import org.piramalswasthya.sakhi.model.RecapStatus
@@ -39,6 +42,7 @@ class MonthlyRecapStripViewModel @Inject constructor(
     private val recapRepo: MonthlyRecapRepo,
     private val availability: MonthlyRecapAvailabilityProvider,
     private val storyGate: RecapStoryGate,
+    gamificationConfigProvider: GamificationConfigProvider,
 ) : ViewModel() {
 
     /** Bumped to force a re-check (e.g. Home resumed, sync may have landed rows). */
@@ -49,7 +53,12 @@ class MonthlyRecapStripViewModel @Inject constructor(
         // observeCurrentRecap() resolves "previous month" when collection starts, so a
         // long-lived subscription kept watching the old month's row once the date
         // rolled over, and the strip showed that month's stale READY/RESUME/REPLAY.
-        refreshTrigger
+        // FLW-1251: also re-check when the server switches the recap on/off — the flag
+        // usually lands just after Home is shown.
+        combine(
+            refreshTrigger,
+            gamificationConfigProvider.state.map { it.monthlyRecap }.distinctUntilChanged()
+        ) { trigger, recapOn -> trigger to recapOn }
             .flatMapLatest { recapRepo.observeCurrentRecap() }
             .flatMapLatest { recap ->
                 flow {

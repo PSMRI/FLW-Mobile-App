@@ -54,14 +54,20 @@ class NCDReferalFormViewModelTest : BaseViewModelTest() {
         viewModel = buildViewModel("Suspected NCD case")
     }
 
-    private fun buildViewModel(referReason: String) = NCDReferalFormViewModel(
+    private fun buildViewModel(referReason: String, isViewMode: Boolean = false) = NCDReferalFormViewModel(
         repository,
         tbReferralFollowUpRepository,
         gcReferralFollowUpRepository,
         tbRepo,
         benRepo,
         context,
-        SavedStateHandle(mapOf("benId" to 1L, "hhId" to 2L, "referReason" to referReason, "referredDate" to 0L))
+        SavedStateHandle(mapOf(
+            "benId" to 1L,
+            "hhId" to 2L,
+            "referReason" to referReason,
+            "referredDate" to 0L,
+            "isViewMode" to isViewMode
+        ))
     )
 
     @Test
@@ -285,6 +291,24 @@ class NCDReferalFormViewModelTest : BaseViewModelTest() {
     @Test
     fun `isViewMode defaults to false`() {
         assertFalse(viewModel.isViewMode)
+    }
+
+    @Test
+    fun `edit enables saved referral fields while keeping referred date locked`() = runTest {
+        viewModel = buildViewModel("TB Screening Form", isViewMode = true)
+        stubNcd(ncdSchema(ncdField("referred_on_date"), ncdField("follow_up_date")))
+
+        viewModel.loadFormSchema(1L)
+        advanceUntilIdle()
+
+        assertTrue(viewModel.isViewMode)
+        assertFalse(ncdFieldOf("follow_up_date").isEditable)
+
+        viewModel.enableFormEditing()
+
+        assertFalse(viewModel.isViewMode)
+        assertFalse(ncdFieldOf("referred_on_date").isEditable)
+        assertTrue(ncdFieldOf("follow_up_date").isEditable)
     }
 
     @Test

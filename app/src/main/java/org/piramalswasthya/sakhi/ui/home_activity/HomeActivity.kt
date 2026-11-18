@@ -76,6 +76,8 @@ import org.piramalswasthya.sakhi.helpers.AccountDeactivationManager
 import org.piramalswasthya.sakhi.helpers.TokenExpiryManager
 import org.piramalswasthya.sakhi.databinding.ActivityHomeBinding
 import org.piramalswasthya.sakhi.helpers.AnalyticsHelper
+import org.piramalswasthya.sakhi.helpers.GamificationConfigProvider
+import org.piramalswasthya.sakhi.helpers.GamificationRuntime
 import org.piramalswasthya.sakhi.helpers.ImageUtils
 import org.piramalswasthya.sakhi.helpers.InAppUpdateHelper
 import org.piramalswasthya.sakhi.helpers.Languages
@@ -103,8 +105,6 @@ import org.piramalswasthya.sakhi.work.WorkerUtils
 import java.net.URI
 import java.util.Locale
 import javax.inject.Inject
-import org.piramalswasthya.sakhi.ui.design.UiFlags
-import org.piramalswasthya.sakhi.ui.home_activity.home.HomeFragment
 
 
 private const val CELEBRATION_MS = 3_500L
@@ -153,6 +153,13 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 
     @Inject
     lateinit var badgeCelebrations: BadgeCelebrations
+
+    @Inject
+    lateinit var gamificationConfigProvider: GamificationConfigProvider
+
+    /** Starts/stops badge work and the evening alarm with the server flag (FLW-1251). */
+    @Inject
+    lateinit var gamificationRuntime: GamificationRuntime
 
     private var _binding: ActivityHomeBinding? = null
 
@@ -319,22 +326,10 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         binding.navView.menu.findItem(R.id.sync_pending_records)?.isVisible = true
         binding.navView.menu.findItem(R.id.ChatFragment)?.isVisible = false
         binding.navView.menu.findItem(R.id.menu_report_crash)?.isVisible = false
-        // Redesign (Figma 09 · Profile & more): "Delete my account" and "Log out" in the error colour
-        listOf(R.id.menu_delete_account, R.id.menu_logout).forEach { id ->
-            binding.navView.menu.findItem(id)?.let { item ->
-                item.title = android.text.SpannableString(item.title).apply {
-                    setSpan(
-                        android.text.style.ForegroundColorSpan(androidx.core.content.ContextCompat.getColor(this@HomeActivity, R.color.ds_error)),
-                        0, length, android.text.Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                    )
-                }
-            }
-        }
      //   binding.navView.menu.findItem(R.id.menu_support)?.isVisible = false
 
         setContentView(binding.root)
         setUpActionBar()
-        if (UiFlags.BOTTOM_NAV) setUpBottomNav()
         setUpNavHeader()
         viewModel.restoredProfilePicUri.observe(this) { uri ->
             uri?.let {
@@ -379,7 +374,11 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 
         askForPermissions()
 
-        eveningNotificationScheduler.schedule()
+        // FLW-1251: the evening alarm (and the badge workers) now start/stop with the
+        // server flag — see observeGamificationState().
+        // eveningNotificationScheduler.schedule()
+        gamificationConfigProvider.refresh()
+        observeGamificationState()
         routeToJourneyIfRequested(intent)
         observeBadgeCelebrations()
 
@@ -430,10 +429,6 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
             }
         }
         binding.versionName.text = "${BuildConfig.VERSION_NAME}"//"APK Version 2.2.3"
-        // Redesign: the version is the last (non-tappable) line of the drawer menu, so it scrolls with the list
-        // instead of floating over the bottom rows of the longer, sectioned menu
-        binding.navView.menu.findItem(R.id.menu_app_version)?.title = BuildConfig.VERSION_NAME
-        binding.versionName.visibility = View.GONE
 
         inAppUpdateHelper = InAppUpdateHelper(this)
         inAppUpdateHelper.checkForUpdate()
@@ -782,7 +777,10 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 badgeCelebrations.awards.collect { (badgeId, level) ->
-                    showBadgeCelebration(badgeId, level)
+                    // FLW-1251: drop anything still queued after badges were switched off
+                    if (gamificationConfigProvider.state.value.badges) {
+                        showBadgeCelebration(badgeId, level)
+                    }
                 }
             }
         }
@@ -825,10 +823,48 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         }
     }
 
+    /**
+     * FLW-1251: gamification is switched per ASHA by the server. Applies the current
+     * switches now and again whenever they change (login, app open, debug override).
+     */
+    private fun observeGamificationState() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                gamificationConfigProvider.state.collect { applyGamificationState(it) }
+            }
+        }
+    }
+
+    private fun applyGamificationState(state: GamificationConfigProvider.State) {
+        // badge workers + table watcher, and the 21:00 alarm (see GamificationRuntime)
+        gamificationRuntime.apply(state)
+        binding.navView.menu.findItem(R.id.badgeShelfFragment)?.isVisible = state.badges
+    }
+
+    /**
+     * FLW-1251: debug/UAT builds only — long-press the employee id in the drawer header to
+     * cycle gamification between following the server, forced ON and forced OFF.
+     */
+    private fun setUpGamificationDebugOverride(idView: TextView) {
+        if (!gamificationConfigProvider.isDebugOverrideAllowed) return
+        idView.setOnLongClickListener {
+            val next = when (gamificationConfigProvider.debugOverride) {
+                GamificationConfigProvider.DebugOverride.SERVER -> GamificationConfigProvider.DebugOverride.ON
+                GamificationConfigProvider.DebugOverride.ON -> GamificationConfigProvider.DebugOverride.OFF
+                GamificationConfigProvider.DebugOverride.OFF -> GamificationConfigProvider.DebugOverride.SERVER
+            }
+            gamificationConfigProvider.debugOverride = next
+            Toast.makeText(this, "Gamification (debug): $next", Toast.LENGTH_SHORT).show()
+            true
+        }
+    }
+
     /** Evening notification tap → Journey screen (Notification LLD §1). */
     private fun routeToJourneyIfRequested(intent: Intent?) {
         if (intent?.getBooleanExtra(NotificationEngine.EXTRA_OPEN_JOURNEY, false) == true) {
             intent.removeExtra(NotificationEngine.EXTRA_OPEN_JOURNEY)
+            // FLW-1251: an older notification tapped after the server switched it off
+            if (!gamificationConfigProvider.state.value.notifications) return
             // post: nav back-stack restore runs after onCreate and would wipe
             // an immediate navigate; after first layout the graph is settled
             binding.root.post {
@@ -843,8 +879,9 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 
     private fun setUpFirstTimePullWorker() {
         WorkerUtils.triggerPeriodicPncEcUpdateWorker(this)
-        WorkerUtils.triggerBadgeWorkers(this)
-        taskCompletionBus.start()
+        // FLW-1251: started/stopped with the server flag in applyGamificationState()
+        // WorkerUtils.triggerBadgeWorkers(this)
+        // taskCompletionBus.start()
 //        WorkerUtils.triggerMaaMeetingWorker(this)
 //        WorkerUtils.triggerSaasBahuSammelanWorker(this)
         if (!pref.isFullPullComplete)
@@ -856,17 +893,10 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         val headerView = binding.navView.getHeaderView(0)
 
         viewModel.currentUser?.let {
-//            headerView.findViewById<TextView>(R.id.tv_nav_name).text =
-//                resources.getString(R.string.nav_item_1_text, it.name)
-//            headerView.findViewById<TextView>(R.id.tv_nav_role).text =
-//                resources.getString(R.string.nav_item_facility_text, pref.getSupervisorSubcenter())
-            // Redesign (Figma 09 · Profile header): plain name, facility on its own line (hidden when empty)
-            headerView.findViewById<TextView>(R.id.tv_nav_name).text = it.name
-            val facility = pref.getSupervisorSubcenter()
-            headerView.findViewById<TextView>(R.id.tv_nav_role).apply {
-                text = facility
-                visibility = if (facility.isNullOrBlank()) View.GONE else View.VISIBLE
-            }
+            headerView.findViewById<TextView>(R.id.tv_nav_name).text =
+                resources.getString(R.string.nav_item_1_text, it.name)
+            headerView.findViewById<TextView>(R.id.tv_nav_role).text =
+                resources.getString(R.string.nav_item_facility_text, pref.getSupervisorSubcenter())
 
 
            // val englishId = String.format(Locale.ENGLISH, "%s", pref.getEmployeeId())
@@ -877,12 +907,12 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
                 Locale.ENGLISH, "%s",
                 if (empId.isNullOrBlank()) it.userId.toString() else empId
             )
-//            val formatted = HtmlCompat.fromHtml(
-//                getString(R.string.nav_item_emp_text, englishId),
-//                HtmlCompat.FROM_HTML_MODE_LEGACY
-//            )
-//            headerView.findViewById<TextView>(R.id.tv_nav_id).text = formatted
-            headerView.findViewById<TextView>(R.id.tv_nav_id).text = getString(R.string.ds_nav_employee_id, englishId)
+            val formatted = HtmlCompat.fromHtml(
+                getString(R.string.nav_item_emp_text, englishId),
+                HtmlCompat.FROM_HTML_MODE_LEGACY
+            )
+            headerView.findViewById<TextView>(R.id.tv_nav_id).text = formatted
+            setUpGamificationDebugOverride(headerView.findViewById(R.id.tv_nav_id))
 
 //            headerView.findViewById<TextView>(R.id.tv_nav_id).text =
 //                resources.getString(R.string.nav_item_3_text, it.userId)
@@ -901,47 +931,6 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
             .setOnClickListener {
                 imagePickerActivityResult.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
             }
-    }
-
-    /**
-     * Redesign (Figma 02 / 03 / 08 / 09, plan step 8) — only when UiFlags.BOTTOM_NAV.
-     * Today / Modules = the two Home pages, Sync = sync dashboard, Profile = the existing drawer ("Profile & more").
-     * No destination or action changes; the bar is shown on top-level screens only.
-     */
-    private fun setUpBottomNav() {
-        val bottomNav = binding.bottomNav
-        val barHeight = (80 * resources.displayMetrics.density).toInt()
-        val navHostView = findViewById<View>(R.id.nav_host_fragment_home)
-        fun showHomeTab(position: Int) {
-            if (navController.currentDestination?.id != R.id.homeFragment)
-                navController.popBackStack(R.id.homeFragment, false)
-            navHostView.post {
-                val host = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_home)
-                (host?.childFragmentManager?.primaryNavigationFragment as? HomeFragment)?.selectTab(position)
-            }
-        }
-        bottomNav.setOnItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.bottom_nav_today -> { showHomeTab(0); true }
-                R.id.bottom_nav_modules -> { showHomeTab(1); true }
-                R.id.bottom_nav_sync -> {
-                    if (navController.currentDestination?.id != R.id.syncDashboardFragment)
-                        navController.navigate(R.id.syncDashboardFragment)
-                    true
-                }
-                R.id.bottom_nav_profile -> { binding.drawerLayout.open(); false }
-                else -> false
-            }
-        }
-        navController.addOnDestinationChangedListener { _, destination, _ ->
-            val topLevel = destination.id == R.id.homeFragment || destination.id == R.id.syncDashboardFragment
-            bottomNav.visibility = if (topLevel) View.VISIBLE else View.GONE
-            navHostView.setPadding(
-                navHostView.paddingLeft, navHostView.paddingTop, navHostView.paddingRight,
-                if (topLevel) barHeight else 0
-            )
-            if (destination.id == R.id.syncDashboardFragment) bottomNav.menu.findItem(R.id.bottom_nav_sync).isChecked = true
-        }
     }
 
     private fun setUpActionBar() {
@@ -1078,24 +1067,9 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 //        binding.toolbar.setLogo(logoResource)
         title?.let {
             binding.toolbar.title = null
-//            binding.tvToolbar.text = it
-            // Redesign: the one-line top bar title flows on one line (module titles carry "\n" for the old tiles)
-            binding.tvToolbar.text = it.replace('\n', ' ')
-        }
-        // Redesign: autosize ran before the toolbar menu icons took their space and never re-ran when only the width
-        // changed (title cut at 22sp: "Children u…"). Re-apply the autosize config whenever the title width changes.
-        if (!toolbarTitleAutosizeHooked) {
-            toolbarTitleAutosizeHooked = true
-            binding.tvToolbar.addOnLayoutChangeListener { v, l, _, r, _, ol, _, or, _ ->
-                if (r - l != or - ol) (v as android.widget.TextView).post {
-                    androidx.core.widget.TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(
-                        v, 16, 22, 1, android.util.TypedValue.COMPLEX_UNIT_SP
-                    )
-                }
-            }
+            binding.tvToolbar.text = it
         }
     }
-    private var toolbarTitleAutosizeHooked = false
 
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {

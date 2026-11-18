@@ -81,6 +81,26 @@ class NotificationScheduler @Inject constructor(
         }
     }
 
+    /**
+     * FLW-1251: evening notification switched off by the server — remove the pending
+     * alarm. Idempotent; [schedule] arms it again when switched back on.
+     */
+    fun cancel() {
+        try {
+            val pending = PendingIntent.getBroadcast(
+                context, REQUEST_CODE,
+                Intent(context, EveningNotificationReceiver::class.java),
+                PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
+            ) ?: return
+            val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            alarmManager.cancel(pending)
+            pending.cancel()
+            Timber.d("EveningNotif: alarm cancelled")
+        } catch (e: Exception) {
+            Timber.e(e, "EveningNotif: cancelling failed")
+        }
+    }
+
     companion object {
         private const val PREFS = "evening_notif_timing"
         private const val KEY_TIME = "evening_time"
