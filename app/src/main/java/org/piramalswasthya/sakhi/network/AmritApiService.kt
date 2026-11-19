@@ -237,19 +237,19 @@ interface AmritApiService {
     suspend fun getVLFData(@Body userDetail: GetVHNDRequest): Response<ResponseBody>
 
     @POST("flw-api/forms/villageLevel/vhnd/saveAll")
-    suspend fun saveVHNDData(@Body userDataDTO: UserDataDTO<Any?>): Response<ResponseBody>
+    suspend fun saveVHNDData(@Body userDataDTO: UserDataDTO<VHNDDTO>): Response<ResponseBody>
 
     @POST("flw-api/forms/villageLevel/vhnc/saveAll")
-    suspend fun saveVHNCData(@Body userDataDTO: UserDataDTO<Any?>): Response<ResponseBody>
+    suspend fun saveVHNCData(@Body userDataDTO: UserDataDTO<VHNCDTO>): Response<ResponseBody>
 
     @POST("flw-api/forms/villageLevel/phc/saveAll")
-    suspend fun savePHCData(@Body userDataDTO: UserDataDTO<Any?>): Response<ResponseBody>
+    suspend fun savePHCData(@Body userDataDTO: UserDataDTO<PHCReviewDTO>): Response<ResponseBody>
 
     @POST("flw-api/forms/villageLevel/ahd/saveAll")
-    suspend fun saveAHDData(@Body userDataDTO: UserDataDTO<Any?>): Response<ResponseBody>
+    suspend fun saveAHDData(@Body userDataDTO: UserDataDTO<AHDDTO>): Response<ResponseBody>
 
     @POST("flw-api/forms/villageLevel/deworming/saveAll")
-    suspend fun saveDewormingData(@Body userDataDTO: UserDataDTO<Any?>): Response<ResponseBody>
+    suspend fun saveDewormingData(@Body userDataDTO: UserDataDTO<DewormingDTO>): Response<ResponseBody>
 
     @Multipart
     @POST("flw-api/campaign/ors/distribution/saveAll")
@@ -303,7 +303,7 @@ interface AmritApiService {
 
     @POST("flw-api/highRisk/nonPregnant/assess/saveAll")
 //    @POST("highRisk/nonPregnant/assess/saveAll")
-    suspend fun saveHRNonPAssessData(@Body userDataDTO: UserDataDTO<Any?>): Response<ResponseBody>
+    suspend fun saveHRNonPAssessData(@Body userDataDTO: UserDataDTO<HRPNonPregnantAssessDTO>): Response<ResponseBody>
 
 
     @POST("flw-api/highRisk/nonPregnant/track/getAll")

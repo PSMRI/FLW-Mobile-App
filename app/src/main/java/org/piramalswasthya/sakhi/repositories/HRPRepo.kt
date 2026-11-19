@@ -664,10 +664,24 @@ class HRPRepo @Inject constructor(
             try {
                 val entry = Gson().fromJson(dto.toString(), HRPNonPregnantAssessDTO::class.java)
                 entry.visitDate?.let {
-                    val hrpPregnantAssessCache = database
+                    val existing = database
                         .hrpDao.getNonPregnantAssess(entry.benId)
-                    if (hrpPregnantAssessCache == null) {
+                    if (existing == null) {
                         database.hrpDao.saveRecord(entry.toCache())
+                    } else if (existing.syncState == SyncState.SYNCED) {
+                        database.hrpDao.saveRecord(
+                            existing.copy(
+                                noOfDeliveries = entry.noOfDeliveries ?: existing.noOfDeliveries,
+                                timeLessThan18m = entry.timeLessThan18m ?: existing.timeLessThan18m,
+                                heightShort = entry.heightShort ?: existing.heightShort,
+                                age = entry.age ?: existing.age,
+                                misCarriage = entry.misCarriage ?: existing.misCarriage,
+                                homeDelivery = entry.homeDelivery ?: existing.homeDelivery,
+                                medicalIssues = entry.medicalIssues ?: existing.medicalIssues,
+                                pastCSection = entry.pastCSection ?: existing.pastCSection,
+                                isHighRisk = entry.isHighRisk
+                            )
+                        )
                     }
                 }
             } catch (e: java.lang.Exception) {
@@ -1038,10 +1052,10 @@ class HRPRepo @Inject constructor(
             for (chunk in chunks) {
                 try {
                     val chunkDtos = chunk.map { cache ->
-                        cache.toHighRiskAssessDTO()
+                        cache.toDTO()
                     }
 
-                    val response = tmcNetworkApiService.saveHighRiskAssessData(
+                    val response = tmcNetworkApiService.saveHRNonPAssessData(
                         UserDataDTO(userId = user.userId, entries = chunkDtos)
                     )
                     val statusCode = response.code()

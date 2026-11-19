@@ -192,9 +192,9 @@ class VLFRepo @Inject constructor(
 
     suspend fun saveDeworming(dewormingCache: DewormingCache) {
         withContext(Dispatchers.IO) {
-            dewormingCache.image1 = persistMeetingImage(dewormingCache.image1)
+          /*  dewormingCache.image1 = persistMeetingImage(dewormingCache.image1)
             dewormingCache.image2 = persistMeetingImage(dewormingCache.image2)
-            database.vlfDao.saveRecord(dewormingCache)
+          */  database.vlfDao.saveRecord(dewormingCache)
         }
     }
 
@@ -860,9 +860,9 @@ class VLFRepo @Inject constructor(
             for (chunk in chunks) {
                 try {
                     val chunkDtos = chunk.map { cache ->
-                        cache.toVhndDTODTO().apply {
-                            image1 = meetingImageForUpload(image1)
-                            image2 = meetingImageForUpload(image2)
+                        cache.toDTO().apply {
+                            Image1 = meetingImageForUpload(Image1)
+                            Image2 = meetingImageForUpload(Image2)
                         }
                     }
 
@@ -1027,9 +1027,9 @@ class VLFRepo @Inject constructor(
             for (chunk in chunks) {
                 try {
                     val chunkDtos = chunk.map { cache ->
-                        cache.toVhncDTODTO().apply {
-                            image1 = meetingImageForUpload(image1)
-                            image2 = meetingImageForUpload(image2)
+                        cache.toDTO().apply {
+                            Image1 = meetingImageForUpload(Image1)
+                            Image2 = meetingImageForUpload(Image2)
                         }
                     }
 
@@ -1194,9 +1194,9 @@ class VLFRepo @Inject constructor(
             for (chunk in chunks) {
                 try {
                     val chunkDtos = chunk.map { cache ->
-                        cache.toPHCDTODTO().apply {
-                            image1 = meetingImageForUpload(image1)
-                            image2 = meetingImageForUpload(image2)
+                        cache.toDTO().apply {
+                            Image1 = meetingImageForUpload(Image1)
+                            Image2 = meetingImageForUpload(Image2)
                         }
                     }
 
@@ -1264,7 +1264,7 @@ class VLFRepo @Inject constructor(
                     }
                 }
             } catch (e: java.lang.Exception) {
-                Timber.d("cannot save entry $dto due to : $e")
+                Timber.d("ch $dto due to : $e")
             }
         }
     }

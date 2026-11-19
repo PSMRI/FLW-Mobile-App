@@ -27,6 +27,7 @@ import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.utils.HelperUtil.getMimeFromUri
 import org.piramalswasthya.sakhi.utils.HelperUtil.showImageDialog
 import org.piramalswasthya.sakhi.utils.HelperUtil.showImageLoadedMessage
+import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 import java.io.File
 
@@ -110,6 +111,7 @@ class AHDFormFragment : Fragment() {
                         getString(R.string.save_successful),
                         Toast.LENGTH_LONG
                     ).show()
+                    WorkerUtils.triggerAmritPushWorker(requireContext())
                     findNavController().navigateUp()
                     viewModel.resetState()
                 }

@@ -143,6 +143,8 @@ fun saveForm() {
             try {
                 _state.postValue(State.SAVING)
                 dataset.mapValues(ancCache, 1)
+                if (ancCache.processed != "N") ancCache.processed = "U"
+                ancCache.syncState = SyncState.UNSYNCED
                 maternalHealthRepo.persistAncRecord(ancCache)
 
                 if (ancCache.isPaiucdId == 2 && ancCache.isYesOrNo==true) {
