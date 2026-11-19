@@ -32,6 +32,8 @@ import org.piramalswasthya.sakhi.model.PregnantWomanRegistrationCache
 import org.piramalswasthya.sakhi.model.PwrPost
 import org.piramalswasthya.sakhi.model.User
 import org.piramalswasthya.sakhi.network.AmritApiService
+import org.piramalswasthya.sakhi.network.HRPNonPregnantAssessDTO
+import org.piramalswasthya.sakhi.network.UserDataDTO
 import retrofit2.Response
 
 /**
@@ -644,27 +646,48 @@ class HRPRepoTest : BaseRepositoryTest() {
     }
 
     @Test
-    fun `getHRNonPAssess parses entries`() = runTest {
+    fun `getHRNonPAssess restores heightShort and other fields from server`() = runTest {
         val entries = """[
-            {"benId":4001,"visitDate":"$serverDate"},
-            {"benId":4002}
+            {"benId":4001,"noOfDeliveries":"Yes","timeLessThan18m":"No","heightShort":"Yes","age":"No","misCarriage":"No","homeDelivery":"Yes","medicalIssues":"No","pastCSection":"No","isHighRisk":true,"visitDate":"$serverDate"}
         ]"""
         coEvery { tmcNetworkApiService.getHRNonPAssessData(any()) } returns
                 jsonResponse(dataWithEntries(entries))
         coEvery { hrpDao.getNonPregnantAssess(any<Long>()) } returns null
+        val saved = slot<HRPNonPregnantAssessCache>()
+        coEvery { hrpDao.saveRecord(capture(saved)) } returns Unit
 
         assertEquals(1, repo.getHRNonPAssessDetailsFromServer(0))
+        assertEquals("Yes", saved.captured.heightShort)
+        assertEquals("Yes", saved.captured.noOfDeliveries)
+        assertEquals("Yes", saved.captured.homeDelivery)
+        assertEquals(SyncState.SYNCED, saved.captured.syncState)
     }
 
     @Test
-    fun `getHRNonPAssess skips already saved records`() = runTest {
-        val entries = """[{"benId":4101,"visitDate":"$serverDate"}]"""
+    fun `getHRNonPAssess fills missing fields in an existing synced record`() = runTest {
+        val entries = """[{"benId":4101,"heightShort":"No","isHighRisk":false,"visitDate":"$serverDate"}]"""
         coEvery { tmcNetworkApiService.getHRNonPAssessData(any()) } returns
                 jsonResponse(dataWithEntries(entries))
-        coEvery { hrpDao.getNonPregnantAssess(any<Long>()) } returns
-                mockk<HRPNonPregnantAssessCache>(relaxed = true)
+        coEvery { hrpDao.getNonPregnantAssess(4101L) } returns
+                HRPNonPregnantAssessCache(id = 7, benId = 4101L, heightShort = null, syncState = SyncState.SYNCED)
+        val saved = slot<HRPNonPregnantAssessCache>()
+        coEvery { hrpDao.saveRecord(capture(saved)) } returns Unit
 
         assertEquals(1, repo.getHRNonPAssessDetailsFromServer(0))
+        assertEquals(7, saved.captured.id)
+        assertEquals("No", saved.captured.heightShort)
+    }
+
+    @Test
+    fun `getHRNonPAssess preserves unsynced local values`() = runTest {
+        val entries = """[{"benId":4102,"heightShort":"Yes","visitDate":"$serverDate"}]"""
+        coEvery { tmcNetworkApiService.getHRNonPAssessData(any()) } returns
+                jsonResponse(dataWithEntries(entries))
+        coEvery { hrpDao.getNonPregnantAssess(4102L) } returns
+                HRPNonPregnantAssessCache(benId = 4102L, heightShort = "No", syncState = SyncState.UNSYNCED)
+
+        assertEquals(1, repo.getHRNonPAssessDetailsFromServer(0))
+        coVerify(exactly = 0) { hrpDao.saveRecord(any<HRPNonPregnantAssessCache>()) }
     }
 
     @Test
@@ -1115,7 +1138,7 @@ class HRPRepoTest : BaseRepositoryTest() {
         coEvery { hrpDao.getNonPregnantAssess(any<SyncState>()) } returns listOf(cache)
         isolateAllExceptNonPAssess()
         coEvery { ecrRepo.postECRDataToAmritServer(any()) } returns false
-        coEvery { tmcNetworkApiService.saveHighRiskAssessData(any()) } returns jsonResponse(pushOk)
+        coEvery { tmcNetworkApiService.saveHRNonPAssessData(any()) } returns jsonResponse(pushOk)
 
         assertTrue(repo.pushUnSyncedRecords())
 
@@ -1133,7 +1156,7 @@ class HRPRepoTest : BaseRepositoryTest() {
         val ecrCache = mockk<EligibleCoupleRegCache>(relaxed = true)
         coEvery { ecrRepo.getSavedRecord(any()) } returns ecrCache
         coEvery { ecrRepo.persistRecord(any()) } returns Unit
-        coEvery { tmcNetworkApiService.saveHighRiskAssessData(any()) } returns jsonResponse(pushOk)
+        coEvery { tmcNetworkApiService.saveHRNonPAssessData(any()) } returns jsonResponse(pushOk)
 
         assertTrue(repo.pushUnSyncedRecords())
 
@@ -1146,7 +1169,7 @@ class HRPRepoTest : BaseRepositoryTest() {
         coEvery { hrpDao.getNonPregnantAssess(any<SyncState>()) } returns listOf(cache)
         isolateAllExceptNonPAssess()
         coEvery { ecrRepo.postECRDataToAmritServer(any()) } returns false
-        coEvery { tmcNetworkApiService.saveHighRiskAssessData(any()) } returns jsonResponse(pushTokenExpired)
+        coEvery { tmcNetworkApiService.saveHRNonPAssessData(any()) } returns jsonResponse(pushTokenExpired)
         coEvery { userRepo.refreshTokenTmc(any(), any()) } returns false
 
         assertTrue(repo.pushUnSyncedRecords())
@@ -1161,7 +1184,7 @@ class HRPRepoTest : BaseRepositoryTest() {
         coEvery { hrpDao.getNonPregnantAssess(any<SyncState>()) } returns listOf(cache)
         isolateAllExceptNonPAssess()
         coEvery { ecrRepo.postECRDataToAmritServer(any()) } returns false
-        coEvery { tmcNetworkApiService.saveHighRiskAssessData(any()) } throws RuntimeException("boom")
+        coEvery { tmcNetworkApiService.saveHRNonPAssessData(any()) } throws RuntimeException("boom")
 
         assertTrue(repo.pushUnSyncedRecords())
 
@@ -1637,10 +1660,40 @@ class HRPRepoTest : BaseRepositoryTest() {
         isolateAllExceptNonPAssess()
         coEvery { ecrRepo.getSavedRecord(9305L) } returns null
         coEvery { ecrRepo.postECRDataToAmritServer(any()) } returns false
-        coEvery { tmcNetworkApiService.saveHighRiskAssessData(any()) } returns jsonResponse(pushOk)
+        coEvery { tmcNetworkApiService.saveHRNonPAssessData(any()) } returns jsonResponse(pushOk)
 
         assertTrue(repo.pushUnSyncedRecords())
 
         coVerify(exactly = 1) { hrpDao.saveRecord(cache) }
+    }
+
+    @Test
+    fun `pushUnSyncedRecordsHRNonPAssess sends full DTO including heightShort to dedicated endpoint`() = runTest {
+        val cache = HRPNonPregnantAssessCache(
+            benId = 9310L,
+            noOfDeliveries = "Yes",
+            timeLessThan18m = "No",
+            heightShort = "No",
+            age = "Yes",
+            misCarriage = "No",
+            homeDelivery = "No",
+            medicalIssues = "Yes",
+            pastCSection = "No",
+            isHighRisk = true
+        )
+        coEvery { hrpDao.getNonPregnantAssess(any<SyncState>()) } returns listOf(cache)
+        isolateAllExceptNonPAssess()
+        coEvery { ecrRepo.postECRDataToAmritServer(any()) } returns false
+        val request = slot<UserDataDTO<HRPNonPregnantAssessDTO>>()
+        coEvery { tmcNetworkApiService.saveHRNonPAssessData(capture(request)) } returns jsonResponse(pushOk)
+
+        assertTrue(repo.pushUnSyncedRecords())
+
+        val dto = request.captured.entries.single()
+        assertEquals("No", dto.heightShort)
+        assertEquals("Yes", dto.noOfDeliveries)
+        assertEquals("Yes", dto.age)
+        coVerify(exactly = 1) { tmcNetworkApiService.saveHRNonPAssessData(any()) }
+        coVerify(exactly = 0) { tmcNetworkApiService.saveHighRiskAssessData(any()) }
     }
 }
