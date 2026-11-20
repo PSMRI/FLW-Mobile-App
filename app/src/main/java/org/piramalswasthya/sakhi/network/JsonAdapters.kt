@@ -922,6 +922,7 @@ data class HRPNonPregnantTrackDTO(
     }
 }
 
+@JsonClass(generateAdapter = true)
 data class HRPNonPregnantAssessDTO(
     val id: Int = 0,
     val benId: Long,
@@ -954,6 +955,7 @@ data class HRPNonPregnantAssessDTO(
     }
 }
 
+@JsonClass(generateAdapter = true)
 data class VHNDDTO(
     val id: Int = 0,
     var vhndDate: String?,
@@ -998,6 +1000,7 @@ data class VHNDDTO(
     }
 }
 
+@JsonClass(generateAdapter = true)
 data class VHNCDTO(
     val id: Int = 0,
     var vhncDate: String?,
@@ -1035,6 +1038,7 @@ data class VHNCDTO(
     }
 }
 
+@JsonClass(generateAdapter = true)
 data class PHCReviewDTO(
     val id: Int = 0,
     var placeId : Int? = 0 ,
@@ -1066,6 +1070,7 @@ data class PHCReviewDTO(
     }
 }
 
+@JsonClass(generateAdapter = true)
 data class AHDDTO(
     val id: Int = 0,
     var mobilizedForAHD: String?,
@@ -1087,6 +1092,7 @@ data class AHDDTO(
     }
 }
 
+@JsonClass(generateAdapter = true)
 data class DewormingDTO(
     var id: Int = 0,
     var dewormingDone: String? = null,

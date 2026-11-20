@@ -117,6 +117,7 @@ constructor(
 
                     dataset.mapValues(hrpNonPregnantAssess, 1)
                     hrpNonPregnantAssess.isHighRisk = isHighRiskStatus()
+                    hrpNonPregnantAssess.syncState = SyncState.UNSYNCED
                     hrpReo.saveRecord(hrpNonPregnantAssess)
                     ben?.let {
                         updateBen(it)

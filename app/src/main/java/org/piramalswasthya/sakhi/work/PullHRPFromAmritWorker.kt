@@ -48,7 +48,6 @@ class PullHRPFromAmritWorker @AssistedInject constructor(
                             async { getHighRiskAssess() },
 //                            async { getHRPAssess() },
                             async { getHRPTrack() },
-//                            async { getHRNonPAssess() },
                             async { getHRNonPTrack() },
 
                            async { getHighRiskAssessMicroBirthPlan() }
@@ -58,7 +57,8 @@ class PullHRPFromAmritWorker @AssistedInject constructor(
                     val timeTaken = TimeUnit.MILLISECONDS.toSeconds(endTime - startTime)
                     Timber.d("Full tb fetching took $timeTaken seconds $result1")
 
-                    if (result1.all { it }) {
+                    val nonPregnantAssessResult = getHRNonPAssess()
+                    if (result1.all { it } && nonPregnantAssessResult) {
                         return@withContext Result.success()
                     }
                     return@withContext Result.failure(workDataOf("worker_name" to "PullHRPFromAmritWorker", "error" to "Pull operation returned incomplete results"))
@@ -152,7 +152,7 @@ class PullHRPFromAmritWorker @AssistedInject constructor(
             } catch (e: Exception) {
                 Timber.e("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
             }
-            true
+            false
         }
     }
 
