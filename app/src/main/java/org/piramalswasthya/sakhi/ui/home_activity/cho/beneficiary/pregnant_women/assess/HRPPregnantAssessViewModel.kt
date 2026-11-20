@@ -12,6 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.configuration.HRPPregnantAssessDataset
+import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.HRPPregnantAssessCache
@@ -114,6 +115,7 @@ constructor(
 
                     dataset.mapValues(hrpPregnantAssessCache, 1)
                     hrpPregnantAssessCache.isHighRisk = isHighRisk()
+                    hrpPregnantAssessCache.syncState = SyncState.UNSYNCED
                     hrpRepo.saveRecord(hrpPregnantAssessCache)
                     ben?.let {
                         dataset.updateBen(it)
