@@ -479,10 +479,31 @@ class HRPRepo @Inject constructor(
                     continue
                 }
                 entry.visitDate?.let {
-                    val hrpPregnantAssessCache = database
-                        .hrpDao.getPregnantAssess(entry.benId)
-                    if (hrpPregnantAssessCache == null) {
+                    val existing = database.hrpDao.getPregnantAssess(entry.benId)
+                    if (existing == null) {
                         database.hrpDao.saveRecord(entry.toCache())
+                    } else if (existing.syncState != SyncState.SYNCING) {
+                        // Fill a locally seeded/partial assessment from the server, while
+                        // preserving any non-null local answers and its pending sync state.
+                        val merged = existing.copy(
+                            noOfDeliveries = existing.noOfDeliveries ?: entry.noOfDeliveries,
+                            timeLessThan18m = existing.timeLessThan18m ?: entry.timeLessThan18m,
+                            heightShort = existing.heightShort ?: entry.heightShort,
+                            age = existing.age ?: entry.age,
+                            rhNegative = existing.rhNegative ?: entry.rhNegative,
+                            homeDelivery = existing.homeDelivery ?: entry.homeDelivery,
+                            badObstetric = existing.badObstetric ?: entry.badObstetric,
+                            multiplePregnancy = existing.multiplePregnancy ?: entry.multiplePregnancy,
+                            lmpDate = existing.lmpDate.takeIf { date -> date > 0L }
+                                ?: entry.lmpDate?.let { date -> getLongFromDate(date) }
+                                ?: existing.lmpDate,
+                            edd = existing.edd.takeIf { date -> date > 0L }
+                                ?: entry.edd?.let { date -> getLongFromDate(date) }
+                                ?: existing.edd,
+                            visitDate = maxOf(existing.visitDate, getLongFromDate(it)),
+                            isHighRisk = entry.isHighRisk || existing.isHighRisk
+                        )
+                        database.hrpDao.saveRecord(merged)
                     }
                 }
             } catch (e: java.lang.Exception) {
@@ -668,18 +689,18 @@ class HRPRepo @Inject constructor(
                         .hrpDao.getNonPregnantAssess(entry.benId)
                     if (existing == null) {
                         database.hrpDao.saveRecord(entry.toCache())
-                    } else if (existing.syncState == SyncState.SYNCED) {
+                    } else if (existing.syncState != SyncState.SYNCING) {
                         database.hrpDao.saveRecord(
                             existing.copy(
-                                noOfDeliveries = entry.noOfDeliveries ?: existing.noOfDeliveries,
-                                timeLessThan18m = entry.timeLessThan18m ?: existing.timeLessThan18m,
-                                heightShort = entry.heightShort ?: existing.heightShort,
-                                age = entry.age ?: existing.age,
-                                misCarriage = entry.misCarriage ?: existing.misCarriage,
-                                homeDelivery = entry.homeDelivery ?: existing.homeDelivery,
-                                medicalIssues = entry.medicalIssues ?: existing.medicalIssues,
-                                pastCSection = entry.pastCSection ?: existing.pastCSection,
-                                isHighRisk = entry.isHighRisk
+                                noOfDeliveries = existing.noOfDeliveries ?: entry.noOfDeliveries,
+                                timeLessThan18m = existing.timeLessThan18m ?: entry.timeLessThan18m,
+                                heightShort = existing.heightShort ?: entry.heightShort,
+                                age = existing.age ?: entry.age,
+                                misCarriage = existing.misCarriage ?: entry.misCarriage,
+                                homeDelivery = existing.homeDelivery ?: entry.homeDelivery,
+                                medicalIssues = existing.medicalIssues ?: entry.medicalIssues,
+                                pastCSection = existing.pastCSection ?: entry.pastCSection,
+                                isHighRisk = entry.isHighRisk || existing.isHighRisk
                             )
                         )
                     }
@@ -874,7 +895,7 @@ class HRPRepo @Inject constructor(
             }
 
             Timber.d("HRP Assess push complete: $successCount succeeded, $failCount failed out of ${entities.size}")
-            return@withContext 1
+            return@withContext if (successCount == entities.size) 1 else 0
         }
     }
     // RECORD-LEVEL ISOLATION: Records now sent in chunks of 20.
@@ -944,7 +965,7 @@ class HRPRepo @Inject constructor(
             }
 
             Timber.d("HRP MicroBirthPlan push complete: $successCount succeeded, $failCount failed out of ${entities.size}")
-            return@withContext 1
+            return@withContext if (successCount == entities.size) 1 else 0
         }
     }
 
@@ -1010,7 +1031,7 @@ class HRPRepo @Inject constructor(
             }
 
             Timber.d("HRP Track push complete: $successCount succeeded, $failCount failed out of ${entities.size}")
-            return@withContext 1
+            return@withContext if (successCount == entities.size) 1 else 0
         }
     }
 
@@ -1094,7 +1115,7 @@ class HRPRepo @Inject constructor(
             }
 
             Timber.d("HRNonP Assess push complete: $successCount succeeded, $failCount failed out of ${entities.size}")
-            return@withContext 1
+            return@withContext if (successCount == entities.size) 1 else 0
         }
     }
 
@@ -1161,7 +1182,7 @@ class HRPRepo @Inject constructor(
             }
 
             Timber.d("HRNonP Track push complete: $successCount succeeded, $failCount failed out of ${entities.size}")
-            return@withContext 1
+            return@withContext if (successCount == entities.size) 1 else 0
         }
     }
 

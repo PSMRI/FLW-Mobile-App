@@ -679,15 +679,25 @@ class HRPRepoTest : BaseRepositoryTest() {
     }
 
     @Test
-    fun `getHRNonPAssess preserves unsynced local values`() = runTest {
-        val entries = """[{"benId":4102,"heightShort":"Yes","visitDate":"$serverDate"}]"""
+    fun `getHRNonPAssess preserves local values and fills missing unsynced fields`() = runTest {
+        val entries = """[{"benId":4102,"noOfDeliveries":"Yes","heightShort":"Yes","isHighRisk":true,"visitDate":"$serverDate"}]"""
         coEvery { tmcNetworkApiService.getHRNonPAssessData(any()) } returns
                 jsonResponse(dataWithEntries(entries))
         coEvery { hrpDao.getNonPregnantAssess(4102L) } returns
-                HRPNonPregnantAssessCache(benId = 4102L, heightShort = "No", syncState = SyncState.UNSYNCED)
+                HRPNonPregnantAssessCache(
+                    id = 8,
+                    benId = 4102L,
+                    heightShort = "No",
+                    syncState = SyncState.UNSYNCED
+                )
+        val saved = slot<HRPNonPregnantAssessCache>()
+        coEvery { hrpDao.saveRecord(capture(saved)) } returns Unit
 
         assertEquals(1, repo.getHRNonPAssessDetailsFromServer(0))
-        coVerify(exactly = 0) { hrpDao.saveRecord(any<HRPNonPregnantAssessCache>()) }
+        assertEquals(8, saved.captured.id)
+        assertEquals("No", saved.captured.heightShort)
+        assertEquals("Yes", saved.captured.noOfDeliveries)
+        assertEquals(SyncState.UNSYNCED, saved.captured.syncState)
     }
 
     @Test

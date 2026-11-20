@@ -12,6 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.configuration.HRPNonPregnantTrackDataset
+import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.HRPNonPregnantTrackCache
@@ -114,6 +115,7 @@ constructor(
 
                     dataset.mapValues(hrpNonPregnantTrackCache, 1)
                     Timber.d("non track data " + hrpNonPregnantTrackCache.severeAnemia)
+                    hrpNonPregnantTrackCache.syncState = SyncState.UNSYNCED
                     hrpReo.saveRecord(hrpNonPregnantTrackCache)
                     if (hrpNonPregnantTrackCache.isPregnant.contentEquals("Yes")) {
                         ben?.let {
@@ -149,6 +151,7 @@ constructor(
                         }
 
                         dataset.updateAssess(pregAssessCache)
+                        pregAssessCache.syncState = SyncState.UNSYNCED
                         hrpReo.saveRecord(pregAssessCache)
                     }
 

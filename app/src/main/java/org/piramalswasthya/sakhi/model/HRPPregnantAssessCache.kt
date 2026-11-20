@@ -6,6 +6,7 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.Relation
+import com.squareup.moshi.JsonClass
 import org.piramalswasthya.sakhi.configuration.FormDataModel
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.helpers.getDateString
@@ -83,6 +84,7 @@ data class AgeUnitDTO(
     var days: Int
 )
 
+@JsonClass(generateAdapter = true)
 data class HighRiskAssessDTO(
     val id: Int = 0,
     val benId: Long = 0,

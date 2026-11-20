@@ -13,6 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.configuration.HRPPregnantTrackDataset
+import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.BenWithHRPTrackingCache
 import org.piramalswasthya.sakhi.model.HRPPregnantTrackCache
@@ -156,6 +157,7 @@ constructor(
                     _state.postValue(State.SAVING)
 
                     dataset.mapValues(hrpPregnantTrackCache, 1)
+                    hrpPregnantTrackCache.syncState = SyncState.UNSYNCED
                     hrpReo.saveRecord(hrpPregnantTrackCache)
 
                     _state.postValue(State.SAVE_SUCCESS)

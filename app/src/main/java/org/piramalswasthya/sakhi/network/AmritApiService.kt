@@ -271,7 +271,7 @@ interface AmritApiService {
 
     @POST("flw-api/highRisk/pregnant/assess/saveAll")
 //    @POST("highRisk/pregnant/assess/saveAll")
-    suspend fun saveHRPAssessData(@Body userDataDTO: UserDataDTO<Any?>): Response<ResponseBody>
+    suspend fun saveHRPAssessData(@Body userDataDTO: UserDataDTO<HRPPregnantAssessDTO>): Response<ResponseBody>
 
     @POST("flw-api/highRisk/assess/getAll")
 //    @POST("highRisk/pregnant/assess/getAll")
@@ -281,12 +281,12 @@ interface AmritApiService {
     suspend fun getMicroBirthPlanAssessData(@Query("userId") userId: Int): Response<ResponseBody>
 
     @POST("flw-api/micro-birthPlan/saveAll")
-    suspend fun saveMicroBirthPlanAssessData(@Body userDataDTO: UserDataDTO<Any?>): Response<ResponseBody>
+    suspend fun saveMicroBirthPlanAssessData(@Body userDataDTO: UserDataDTO<HRPMicroBirthPlanDTO>): Response<ResponseBody>
 
 
     @POST("flw-api/highRisk/assess/saveAll")
 //    @POST("highRisk/pregnant/assess/saveAll")
-    suspend fun saveHighRiskAssessData(@Body userDataDTO: UserDataDTO<Any?>): Response<ResponseBody>
+    suspend fun saveHighRiskAssessData(@Body userDataDTO: UserDataDTO<HighRiskAssessDTO>): Response<ResponseBody>
 
 
     @POST("flw-api/highRisk/pregnant/track/getAll")
@@ -295,7 +295,7 @@ interface AmritApiService {
 
     @POST("flw-api/highRisk/pregnant/track/saveAll")
 //    @POST("highRisk/pregnant/track/saveAll")
-    suspend fun saveHRPTrackData(@Body userDataDTO: UserDataDTO<Any?>): Response<ResponseBody>
+    suspend fun saveHRPTrackData(@Body userDataDTO: UserDataDTO<HRPPregnantTrackDTO>): Response<ResponseBody>
 
     @POST("flw-api/highRisk/nonPregnant/assess/getAll")
 //    @POST("highRisk/nonPregnant/assess/getAll")
@@ -312,7 +312,7 @@ interface AmritApiService {
 
     @POST("flw-api/highRisk/nonPregnant/track/saveAll")
 //    @POST("highRisk/nonPregnant/track/saveAll")
-    suspend fun saveHRNonPTrackData(@Body userDataDTO: UserDataDTO<Any?>): Response<ResponseBody>
+    suspend fun saveHRNonPTrackData(@Body userDataDTO: UserDataDTO<HRPNonPregnantTrackDTO>): Response<ResponseBody>
 
     @POST("identity-api/id/getByBenId")
     suspend fun getBeneficiaryWithId(@Query("benId") benId: Long): Response<ResponseBody>

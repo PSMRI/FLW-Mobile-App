@@ -726,6 +726,7 @@ data class UserDataDTO<T>(
     val entries: List<T>
 )
 
+@JsonClass(generateAdapter = true)
 data class HRPPregnantTrackDTO(
     var id: Int = 0,
     val benId: Long,
@@ -788,6 +789,7 @@ data class HRPPregnantTrackDTO(
     }
 }
 
+@JsonClass(generateAdapter = true)
 data class HRPPregnantAssessDTO(
     var id: Int = 0,
     val benId: Long,
@@ -874,6 +876,7 @@ data class HRPMicroBirthPlanDTO(
 
 
 
+@JsonClass(generateAdapter = true)
 data class HRPNonPregnantTrackDTO(
     var id: Int = 0,
     val benId: Long,

@@ -43,15 +43,19 @@ class PullHRPFromAmritWorker @AssistedInject constructor(
                 val startTime = System.currentTimeMillis()
 
                 try {
-                    val result1 =
+                    // These two assessment endpoints write to the same Room tables.
+                    // Run them in order to avoid duplicate rows from concurrent read/insert.
+                    val assessmentResults = listOf(
+                        getHighRiskAssess(),
+                        getHRPAssess()
+                    )
+                    val trackingResults =
                         awaitAll(
-                            async { getHighRiskAssess() },
-//                            async { getHRPAssess() },
                             async { getHRPTrack() },
                             async { getHRNonPTrack() },
-
                            async { getHighRiskAssessMicroBirthPlan() }
                         )
+                    val result1 = assessmentResults + trackingResults
 
                     val endTime = System.currentTimeMillis()
                     val timeTaken = TimeUnit.MILLISECONDS.toSeconds(endTime - startTime)
