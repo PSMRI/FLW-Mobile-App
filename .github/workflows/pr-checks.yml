@@ -14,6 +14,24 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Separate from the build so a bad keep rule fails in seconds (FLW-1216). Only lines
+  # the PR adds are checked; the existing broad rules are being removed under FLW-1211.
+  proguard-keep-rules:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check new ProGuard keep rules
+        run: python3 .github/scripts/check_proguard_keeps.py "origin/${{ github.base_ref }}"
+
   test-and-coverage:
     runs-on: ubuntu-latest
 
