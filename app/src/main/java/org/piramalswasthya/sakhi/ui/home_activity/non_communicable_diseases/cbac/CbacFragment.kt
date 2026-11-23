@@ -55,7 +55,8 @@ import kotlin.jvm.java
 class CbacFragment : Fragment() {
 
 
-    private val binding by lazy { FragmentCbacBinding.inflate(layoutInflater) }
+    private var _binding: FragmentCbacBinding? = null
+    private val binding: FragmentCbacBinding get() = _binding!!
 
     private val viewModel: CbacViewModel by viewModels()
     val referViewModel: NCDReferDialogViewModel by viewModels()
@@ -171,6 +172,7 @@ class CbacFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
+        _binding = FragmentCbacBinding.inflate(inflater, container, false)
         return binding.root
     }
     private var dialogAlreadyShown = false
@@ -197,8 +199,8 @@ class CbacFragment : Fragment() {
 
         binding.layoutReferralForm.form.rvInputForm.adapter = adapter
 
-        lifecycleScope.launch {
-           repeatOnLifecycle(Lifecycle.State.STARTED) {
+        viewLifecycleOwner.lifecycleScope.launch {
+           viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 referViewModel.formList.collect {
                     adapter.submitList(it)
                 }
@@ -329,6 +331,7 @@ class CbacFragment : Fragment() {
                             viewModel.cbacRepo.updateReferStatus(viewModel.benId, true)
                         }
                     }
+                    if (!isAdded) return@observe
                     WorkerUtils.triggerAmritPushWorker(requireContext())
                     findNavController().navigateUp()
                 }
@@ -1480,6 +1483,7 @@ class CbacFragment : Fragment() {
         asreferAlertDialog?.dismiss()
         asreferAlertDialog = null
         super.onDestroyView()
+        _binding = null
     }
 
     override fun onDestroy() {

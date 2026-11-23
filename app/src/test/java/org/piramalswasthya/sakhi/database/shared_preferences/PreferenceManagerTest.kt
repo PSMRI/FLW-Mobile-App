@@ -20,7 +20,6 @@ import org.junit.Test
 import org.piramalswasthya.sakhi.R
 import java.io.File
 import java.io.IOException
-import java.security.KeyStore
 
 class PreferenceManagerTest {
 
@@ -117,57 +116,33 @@ class PreferenceManagerTest {
     }
 
     @Test
-    fun `getInstance deletes the stale master key alias while recovering`() {
-        val fakeKeyStore = mockk<KeyStore>(relaxed = true)
-        mockkStatic(KeyStore::class)
-        try {
-            every { KeyStore.getInstance(any()) } returns fakeKeyStore
-        } catch (e: Exception) {
-            org.junit.Assume.assumeNoException(
-                "AndroidKeyStore provider is unavailable in a plain JVM unit test environment",
-                e
-            )
-            return
-        }
-        every { fakeKeyStore.containsAlias(any()) } returns true
-
+    fun `getInstance keeps the shared master key when the retry after deleting only its own file succeeds`() {
         val recovered = mockk<SharedPreferences>()
         every { MasterKeys.getOrCreate(any()) } returns "alias"
         every {
             EncryptedSharedPreferences.create(any(), any(), any(), any(), any())
-        } throws IOException("corrupted keystore") andThen recovered
+        } throws IOException("corrupted keyset") andThen recovered
 
         val result = PreferenceManager.getInstance(context)
 
         assertSame(recovered, result)
-        verify { fakeKeyStore.deleteEntry("_androidx_security_master_key_") }
+        verify(exactly = 1) { context.deleteSharedPreferences("sakhi_prefs") }
+        verify(exactly = 2) { EncryptedSharedPreferences.create(any(), any(), any(), any(), any()) }
     }
 
     @Test
-    fun `getInstance still recovers when the alias is not present in the keystore`() {
-        val fakeKeyStore = mockk<KeyStore>(relaxed = true)
-        mockkStatic(KeyStore::class)
-        try {
-            every { KeyStore.getInstance(any()) } returns fakeKeyStore
-        } catch (e: Exception) {
-            org.junit.Assume.assumeNoException(
-                "AndroidKeyStore provider is unavailable in a plain JVM unit test environment",
-                e
-            )
-            return
-        }
-        every { fakeKeyStore.containsAlias(any()) } returns false
-
+    fun `getInstance resets the master key only when the retry with the existing key also fails`() {
         val recovered = mockk<SharedPreferences>()
         every { MasterKeys.getOrCreate(any()) } returns "alias"
         every {
             EncryptedSharedPreferences.create(any(), any(), any(), any(), any())
-        } throws IOException("corrupted keystore") andThen recovered
+        } throws IOException("corrupted keyset") andThenThrows IOException("master key unusable") andThen recovered
 
         val result = PreferenceManager.getInstance(context)
 
         assertSame(recovered, result)
-        verify(exactly = 0) { fakeKeyStore.deleteEntry(any()) }
+        verify(exactly = 2) { context.deleteSharedPreferences("sakhi_prefs") }
+        verify(exactly = 3) { EncryptedSharedPreferences.create(any(), any(), any(), any(), any()) }
     }
 
     @Test
@@ -179,15 +154,16 @@ class PreferenceManagerTest {
 
         try {
             PreferenceManager.getInstance(context)
-            fail("expected the second failure to propagate")
+            fail("expected the final failure to propagate")
         } catch (e: IOException) {
             assertEquals("still corrupted", e.message)
         }
+        verify(exactly = 3) { EncryptedSharedPreferences.create(any(), any(), any(), any(), any()) }
     }
 
     @Test
     fun `getInstance recovers even when deleting the stale prefs file also fails`() {
-        every { context.filesDir } throws RuntimeException("no files dir")
+        every { context.deleteSharedPreferences(any()) } throws RuntimeException("cannot delete prefs")
 
         val recovered = mockk<SharedPreferences>()
         every { MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC) } returns "alias"

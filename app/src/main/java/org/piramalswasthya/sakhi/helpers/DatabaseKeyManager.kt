@@ -20,8 +20,7 @@ object DatabaseKeyManager {
             createEncryptedPreferences(context)
         } catch (e: Exception) {
             Timber.e(e, "DatabaseKeyManager: EncryptedSharedPreferences failed, recovering")
-            clearCorruptedPrefs(context)
-            createEncryptedPreferences(context)
+            recoverEncryptedPreferences(context)
         }
 
         var passphrase = prefs.getString(KEY_DB_PASSWORD, null)
@@ -45,6 +44,17 @@ object DatabaseKeyManager {
         )
     }
 
+    private fun recoverEncryptedPreferences(context: Context): SharedPreferences {
+        deletePrefsFile(context)
+        return try {
+            createEncryptedPreferences(context)
+        } catch (e: Exception) {
+            Timber.e(e, "DatabaseKeyManager: Retry with existing master key failed, resetting master key")
+            clearCorruptedPrefs(context)
+            createEncryptedPreferences(context)
+        }
+    }
+
     private fun clearCorruptedPrefs(context: Context) {
         try {
             val keyStore = KeyStore.getInstance("AndroidKeyStore")
@@ -55,9 +65,12 @@ object DatabaseKeyManager {
         } catch (e: Exception) {
             Timber.e(e, "DatabaseKeyManager: Failed to delete master key")
         }
+        deletePrefsFile(context)
+    }
+
+    private fun deletePrefsFile(context: Context) {
         try {
-            val prefsFile = java.io.File(context.filesDir.parent, "shared_prefs/$PREF_NAME.xml")
-            if (prefsFile.exists()) prefsFile.delete()
+            context.deleteSharedPreferences(PREF_NAME)
         } catch (e: Exception) {
             Timber.e(e, "DatabaseKeyManager: Failed to clear preferences file")
         }

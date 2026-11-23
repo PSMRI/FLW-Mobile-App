@@ -25,8 +25,7 @@ class PreferenceManager private constructor() {
                     createEncryptedPreferences(context)
                 } catch (e: Exception) {
                     Timber.e(e, "EncryptedSharedPreferences failed, recovering")
-                    clearCorruptedKeystore(context)
-                    createEncryptedPreferences(context)
+                    recoverEncryptedPreferences(context)
                 }
                 INSTANCE = instance
                 return instance
@@ -45,6 +44,17 @@ class PreferenceManager private constructor() {
             )
         }
 
+        private fun recoverEncryptedPreferences(context: Context): SharedPreferences {
+            deletePrefsFile(context)
+            return try {
+                createEncryptedPreferences(context)
+            } catch (e: Exception) {
+                Timber.e(e, "Retry with existing master key failed, resetting master key")
+                clearCorruptedKeystore(context)
+                createEncryptedPreferences(context)
+            }
+        }
+
         private fun clearCorruptedKeystore(context: Context) {
             try {
                 val keyStore = KeyStore.getInstance("AndroidKeyStore")
@@ -55,10 +65,12 @@ class PreferenceManager private constructor() {
             } catch (e: Exception) {
                 Timber.e(e, "Failed to delete master key from KeyStore")
             }
+            deletePrefsFile(context)
+        }
+
+        private fun deletePrefsFile(context: Context) {
             try {
-                val prefName = context.resources.getString(R.string.PREF_NAME)
-                val prefsFile = java.io.File(context.filesDir.parent, "shared_prefs/$prefName.xml")
-                if (prefsFile.exists()) prefsFile.delete()
+                context.deleteSharedPreferences(context.resources.getString(R.string.PREF_NAME))
             } catch (e: Exception) {
                 Timber.e(e, "Failed to clear preferences file")
             }

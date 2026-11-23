@@ -16,6 +16,7 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.FragmentAadhaarIdBinding
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
 import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id.AadhaarIdViewModel.State
+import org.piramalswasthya.sakhi.utils.safeNavigate
 
 
 @AndroidEntryPoint
@@ -137,13 +138,13 @@ class AadhaarIdFragment : Fragment() {
                         viewModel.resetState()
 
                         if (viewModel.verificationType.value == "OTP") {
-                            findNavController().navigate(
+                            findNavController().safeNavigate(
                                 AadhaarIdFragmentDirections.actionAadhaarIdFragmentToAadhaarOtpFragment(
                                     viewModel.txnId, viewModel.mobileNumber
                                 )
                             )
                         } else if (viewModel.verificationType.value == "FP") {
-                            findNavController().navigate(
+                            findNavController().safeNavigate(
                                 AadhaarIdFragmentDirections.actionAadhaarIdFragmentToGenerateMobileOtpFragment(
                                     viewModel.txnId, viewModel.mobileNumber
                                 )
@@ -170,7 +171,8 @@ class AadhaarIdFragment : Fragment() {
                 }
 
                 State.ABHA_GENERATED_SUCCESS -> {
-                    findNavController().navigate(
+                    viewModel.resetState()
+                    findNavController().safeNavigate(
                         AadhaarIdFragmentDirections.actionAadhaarIdFragmentToCreateAbhaFragment(
                             viewModel.txnId, "", "", "",""
                         )
@@ -181,10 +183,10 @@ class AadhaarIdFragment : Fragment() {
 
         viewModel.navigateToAadhaarConsent.observe(viewLifecycleOwner){
             if (it==true){
-                findNavController().navigate(
+                viewModel.navigateToAadhaarConsent(false)
+                findNavController().safeNavigate(
                     AadhaarIdFragmentDirections.actionAadhaarIdFragmentToAadhaarConsentFragment()
                 )
-                viewModel.navigateToAadhaarConsent(false)
             }
         }
     }

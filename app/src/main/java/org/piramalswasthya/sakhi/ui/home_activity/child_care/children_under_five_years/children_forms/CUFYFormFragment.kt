@@ -82,6 +82,7 @@ class CUFYFormFragment : Fragment() {
 
     private val galleryLauncher =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            if (!::adapter.isInitialized) return@registerForActivityResult
             uri?.let {
                 try {
 
@@ -118,6 +119,7 @@ class CUFYFormFragment : Fragment() {
 
     private val cameraLauncher =
         registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+            if (!::adapter.isInitialized) return@registerForActivityResult
             if (success && tempCameraUri != null) {
                 val sizeInMB = requireContext().getFileSizeInMB(tempCameraUri!!)
                 val maxSize = (currentImageField?.validation?.maxSizeMB ?: 5).toDouble()
@@ -435,6 +437,7 @@ class CUFYFormFragment : Fragment() {
         AlertDialog.Builder(requireContext())
             .setTitle(getString(R.string.select_image))
             .setItems(options) { _, which ->
+                if (!isAdded) return@setItems
                 when (which) {
                     0 -> launchCamera()
                     1 -> galleryLauncher.launch("image/*")
@@ -444,6 +447,7 @@ class CUFYFormFragment : Fragment() {
     }
 
     private fun launchCamera() {
+        if (!isAdded) return
         val contentValues = ContentValues().apply {
             put(MediaStore.Images.Media.DISPLAY_NAME, "IMG_${System.currentTimeMillis()}.jpg")
             put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
@@ -464,6 +468,7 @@ class CUFYFormFragment : Fragment() {
         val dobString = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).format(Date(deliveryDate))
 
         if (currentVisitDay.isBlank()) return
+        if (!::adapter.isInitialized) return
 
         val updatedFields = adapter.getUpdatedFields()
         val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
