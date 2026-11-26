@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.ui.home_activity.immunization_due.child_immunization.list
 
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
@@ -197,14 +198,15 @@ class ChildImmunizationListFragment : Fragment(),ImmunizationBirthDoseCategoryAd
         val textColor = if (active) onAccent else accent
         label.setTextColor(textColor)
         count.setTextColor(textColor)
+        count.backgroundTintList = ColorStateList.valueOf(textColor)
     }
 
     override fun onStart() {
         super.onStart()
         activity?.let {
             (it as HomeActivity).updateActionBar(
-                R.drawable.ic__immunization,
-                getString(R.string.child_immunization_list)
+                R.drawable.ic_vaccines,
+                getString(R.string.icon_title_imm)
             )
         }
     }
