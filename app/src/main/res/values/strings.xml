@@ -1804,14 +1804,14 @@
     <string name="notification_recap_body">Your recap for last month is ready. Tap to watch it.</string>
 
     <!-- FLW-1144 Routine Immunization worklist -->
-    <string name="imm_due_this_month">Due for this month</string>
-    <string name="imm_scheduled_next_month">Scheduled for next month</string>
-    <string name="imm_dose_stage">Dose Stage</string>
+    <string name="imm_due_this_month">This month due list</string>
+    <string name="imm_scheduled_next_month">Next month due list</string>
+    <string name="imm_dose_stage">Filter by Dose:</string>
     <string name="imm_select_dose_stage">Select Dose Stage</string>
     <string name="imm_no_match_for_filters">No beneficiaries match the selected filters.</string>
     <plurals name="imm_beneficiary_count">
-        <item quantity="one">%d beneficiary</item>
-        <item quantity="other">%d beneficiaries</item>
+        <item quantity="one">%d child</item>
+        <item quantity="other">%d children</item>
     </plurals>
     <string name="next_follow_up_will_be_available_from">Next follow-up will be available from %1$s</string>
     <string name="follow_up_date_cannot_be_in_the_future">Follow-up date cannot be in the future</string>

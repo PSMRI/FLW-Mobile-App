@@ -110,16 +110,21 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/roboto_medium"
+                        android:gravity="center"
                         android:text="@string/imm_due_this_month"
                         android:textSize="@dimen/_11sdp" />
 
                     <TextView
                         android:id="@+id/tv_due_this_month_count"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="@dimen/_30sdp"
+                        android:layout_height="@dimen/_30sdp"
+                        android:layout_gravity="center_horizontal"
                         android:layout_marginTop="@dimen/_4sdp"
-                        android:fontFamily="@font/roboto_medium"
-                        android:textSize="@dimen/_13sdp"
+                        android:background="@drawable/bg_imm_count_circle"
+                        android:fontFamily="@font/roboto_bold"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:textSize="@dimen/_14sdp"
                         tools:text="4" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -147,16 +152,21 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/roboto_medium"
+                        android:gravity="center"
                         android:text="@string/imm_scheduled_next_month"
                         android:textSize="@dimen/_11sdp" />
 
                     <TextView
                         android:id="@+id/tv_next_month_count"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="@dimen/_30sdp"
+                        android:layout_height="@dimen/_30sdp"
+                        android:layout_gravity="center_horizontal"
                         android:layout_marginTop="@dimen/_4sdp"
-                        android:fontFamily="@font/roboto_medium"
-                        android:textSize="@dimen/_13sdp"
+                        android:background="@drawable/bg_imm_count_circle"
+                        android:fontFamily="@font/roboto_bold"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:textSize="@dimen/_14sdp"
                         tools:text="2" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -166,13 +176,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_6sdp"
-            android:gravity="center_vertical"
+            android:gravity="center_vertical|end"
             android:orientation="horizontal">
 
             <TextView
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_marginEnd="@dimen/_6sdp"
                 android:fontFamily="@font/roboto_medium"
                 android:text="@string/imm_dose_stage"
                 android:textColor="@color/md_theme_light_shadow" />
@@ -203,9 +213,10 @@
             android:id="@+id/tv_result_meta"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_6sdp"
+            android:layout_marginTop="@dimen/_5sdp"
             android:textColor="@color/md_theme_light_shadow"
-            android:textSize="@dimen/_11sdp"
+            android:textSize="@dimen/_12sdp"
+            android:fontFamily="@font/roboto_medium"
             tools:text="4 beneficiaries · Due for this month" />
 
         <androidx.recyclerview.widget.RecyclerView

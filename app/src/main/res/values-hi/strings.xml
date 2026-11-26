@@ -1573,14 +1573,14 @@
     <string name="kp_risk_other">अन्य</string>
 
     <!-- FLW-1144 Routine Immunization worklist -->
-    <string name="imm_due_this_month">इस महीने देय</string>
-    <string name="imm_scheduled_next_month">अगले महीने निर्धारित</string>
-    <string name="imm_dose_stage">खुराक चरण</string>
+    <string name="imm_due_this_month">इस महीने की देय सूची</string>
+    <string name="imm_scheduled_next_month">अगले महीने की देय सूची</string>
+    <string name="imm_dose_stage">खुराक अनुसार फ़िल्टर:</string>
     <string name="imm_select_dose_stage">खुराक चरण चुनें</string>
     <string name="imm_no_match_for_filters">चयनित फ़िल्टर से कोई लाभार्थी मेल नहीं खाता।</string>
     <plurals name="imm_beneficiary_count">
-        <item quantity="one">%d लाभार्थी</item>
-        <item quantity="other">%d लाभार्थी</item>
+        <item quantity="one">%d बच्चा</item>
+        <item quantity="other">%d बच्चे</item>
     </plurals>
     <string name="next_follow_up_will_be_available_from">अगला फॉलो-अप %1$s से उपलब्ध होगा</string>
     <string name="follow_up_date_cannot_be_in_the_future">फॉलो-अप की तारीख भविष्य की नहीं हो सकती</string>

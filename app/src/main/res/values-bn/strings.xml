@@ -1564,14 +1564,14 @@
     <string name="kp_risk_other">অন্যান্য</string>
 
     <!-- FLW-1144 Routine Immunization worklist -->
-    <string name="imm_due_this_month">এই মাসে দেয়</string>
-    <string name="imm_scheduled_next_month">আগামী মাসেৰ জন্য নিৰ্ধাৰিত</string>
-    <string name="imm_dose_stage">ডোজ পৰ্যায়</string>
+    <string name="imm_due_this_month">এই মাসের দেয় তালিকা</string>
+    <string name="imm_scheduled_next_month">আগামী মাসের দেয় তালিকা</string>
+    <string name="imm_dose_stage">ডোজ অনুযায়ী ফিল্টার:</string>
     <string name="imm_select_dose_stage">ডোজ পৰ্যায় নিৰ্বাচন কৰুন</string>
     <string name="imm_no_match_for_filters">নিৰ্বাচিত ফিল্টাৰেৰ সঙ্গে কোনো সুবিধাভোগী মেলেনি।</string>
     <plurals name="imm_beneficiary_count">
-        <item quantity="one">%d সুবিধাভোগী</item>
-        <item quantity="other">%d সুবিধাভোগী</item>
+        <item quantity="one">%d জন শিশু</item>
+        <item quantity="other">%d জন শিশু</item>
     </plurals>
     <string name="next_follow_up_will_be_available_from">পরবর্তী ফলো-আপ %1$s থেকে উপলব্ধ হবে</string>
     <string name="follow_up_date_cannot_be_in_the_future">ফলো-আপৰ তাৰিখ ভৱিষ্যতৰ হ\'ব নোৱাৰে</string>

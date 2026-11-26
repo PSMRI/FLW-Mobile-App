@@ -22,7 +22,7 @@ class RecapContentCodecTest {
         )
         val file = candidates.firstOrNull { it.exists() }
             ?: error("recap_content.json not found (cwd=${File(".").absolutePath})")
-        return file.readText(Charsets.UTF_8)
+        return file.readText(Charsets.UTF_8).replace("\r\n", "\n")
     }
 
     @Test
